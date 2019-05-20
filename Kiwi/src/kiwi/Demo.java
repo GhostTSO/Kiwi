@@ -1,5 +1,7 @@
 package kiwi;
 
+import java.nio.ByteBuffer;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -10,6 +12,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
 public class Demo {
+	
 	public static void main(String[] args) {		
 		int i = 0;
 		for(Mixer.Info mixer_info: AudioSystem.getMixerInfo()) {
@@ -35,32 +38,46 @@ public class Demo {
 		}
 		
 		
-//		Mixer.Info mixer_info = AudioSystem.getMixerInfo()[16];
-//		Mixer mixer = AudioSystem.getMixer(mixer_info);
-//		DataLine.Info line_info = (DataLine.Info)mixer.getTargetLineInfo()[0];
-//		
-//		try {			
-//			TargetDataLine line = (TargetDataLine) mixer.getLine(line_info);
-//			line.open();
-//			line.start();
-//			
-//			AudioFormat format = line.getFormat();
-//			
-//			new Thread(() -> {
-//				while(true) {
-//					byte[] buffer = new byte[format.getFrameSize()];
-//					int b = line.read(buffer, 0, buffer.length);
-//					if(b > 0) {
-//						for(int j = 0; j < buffer.length; j ++)
-//							System.out.print(buffer[j] + ",");
-//						System.out.println();
-//					}
-//				}
-//			}).start();
-//			
-//		} catch (LineUnavailableException lue) {
-//			lue.printStackTrace();
-//		}	
+		Mixer.Info mixer_info = AudioSystem.getMixerInfo()[16];
+		Mixer mixer = AudioSystem.getMixer(mixer_info);
+		DataLine.Info line_info = (DataLine.Info)mixer.getTargetLineInfo()[0];
+		
+		try {		
+			AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 48000, 16, 2, 4, 60, true);
+			TargetDataLine line = (TargetDataLine) mixer.getLine(line_info);
+			line.open(format);
+			line.start();
+			
+			System.out.println(format);
+			
+			new Thread(() -> {
+				ByteBuffer b2s = ByteBuffer.allocate(2);
+				while(true) {
+					byte[] buffer = new byte[4];					
+					int b = line.read(buffer, 0, buffer.length);
+					
+					b2s.clear();
+					b2s.put(buffer[0]);
+					b2s.put(buffer[1]);
+					b2s.flip();
+					short l = b2s.getShort();
+					
+					b2s.clear();
+					b2s.put(buffer[2]);
+					b2s.put(buffer[3]);
+					b2s.flip();
+					short r = b2s.getShort();
+					
+					if(b > 0) {
+						System.out.println("L: " + l);
+						System.out.println("R: " + r);
+					}
+				}
+			}).start();
+			
+		} catch (LineUnavailableException lue) {
+			lue.printStackTrace();
+		}	
 		
 	}
 }
