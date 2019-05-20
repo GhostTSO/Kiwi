@@ -9,7 +9,6 @@ import java.awt.event.WindowEvent;
 
 import kiwi.util.Util;
 
-
 public class Kiwi {
 	public static final Version
 		VERSION = new Version("Kiwi", 0, 0, 1);
