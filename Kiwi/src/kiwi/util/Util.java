@@ -118,7 +118,15 @@ public class Util {
     	Complex[] x = new Complex[channel.length];
     	for(int i = 0; i < channel.length; i ++)
     		x[i] = new Complex(channel[i], 0);
-    	return fft(x);
+    	Complex[] y = fft(x);
+    	for(int i = 0; i < x.length; i ++) {
+    		double
+	    		R = Math.sqrt( y[i].re * y[i].re + y[i].im * y[i].im),
+	    		Θ = Math.atan2(y[i].im , y[i].re);
+	    	y[i].re = R;
+	    	y[i].im = Θ;
+    	}
+    	return y;
 	}
     
     public static Complex[] fft(Complex[] x) {    	
