@@ -7,8 +7,8 @@ public class Util {
 	}
 	
 	public static final float map(float x, float a, float b, float c, float d) {
-		return (x - a) / (b - a) * (d - c);
-	}	
+		return (x - a) / (b - a) * (d - c) + c;
+	}
 	
 	public static final float sin(float x) {
 		return (float)java.lang.Math.sin(x);
