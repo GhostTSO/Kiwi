@@ -1,12 +1,11 @@
 package kiwi;
 
 import kiwi.core.Engine;
-import kiwi.core.Source;
 
 public class Kiwi {
 	
 	public static final Version
-		VERSION = new Version("Kiwi", 1, 0, 2);
+		VERSION = new Version("Kiwi", 1, 0, 3);
 	
 	public static void main(String[] args) {
 		Engine.getConfig().set(Engine.DEBUG, true);

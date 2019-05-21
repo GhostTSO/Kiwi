@@ -75,26 +75,29 @@ public class Engine implements Runnable {
 		menubar;
 	
 	protected final Complex[]
-		l_channel = new Complex[Source.SAMPLES],
-		r_channel = new Complex[Source.SAMPLES];
+		stereo_l = new Complex[Source.SAMPLES],
+		stereo_r = new Complex[Source.SAMPLES],
+		mono = new Complex[Source.SAMPLES];
 
 	protected final UpdateContext
 		update_context = new UpdateContext(
-				this.l_channel,
-				this.r_channel
+				this.stereo_l,
+				this.stereo_r,
+				this.mono
 				);
 	protected final RenderContext
 		render_context = new RenderContext(
-				this.l_channel,
-				this.r_channel
+				this.stereo_l,
+				this.stereo_r,
+				this.mono
 				);
 	protected BufferStrategy
 		buffer_strategy;
 	
 	public Engine() {
 		for(int i = 0; i < Source.SAMPLES; i ++) {
-			l_channel[i] = new Complex();
-			r_channel[i] = new Complex();
+			stereo_l[i] = new Complex();
+			stereo_r[i] = new Complex();
 		}
 	}
 	
@@ -206,30 +209,33 @@ public class Engine implements Runnable {
 	private final void onUpdate() {
 		if(this.effect != null) {
 			for(int i = 0; i < Source.SAMPLES; i ++) {
-				this.l_channel[i].re = 0; this.l_channel[i].im = 0;
-				this.r_channel[i].re = 0; this.r_channel[i].im = 0;
+				this.stereo_l[i].re = 0; this.stereo_l[i].im = 0;
+				this.stereo_r[i].re = 0; this.stereo_r[i].im = 0;
 			}
 			int n = 0;
 			for(Source _source: this.sources) {
 				if(_source.line.isOpen()) {
 					_source.poll();
 					for(int i = 0; i < Source.SAMPLES; i ++) {
-						this.l_channel[i].re += _source.l_channel[i].re;
-						this.l_channel[i].im += _source.l_channel[i].im;
-						this.r_channel[i].re += _source.r_channel[i].re;
-						this.r_channel[i].im += _source.r_channel[i].im;
+						this.stereo_l[i].re += _source.stereo_l[i].re;
+						this.stereo_l[i].im += _source.stereo_l[i].im;
+						this.stereo_r[i].re += _source.stereo_r[i].re;
+						this.stereo_r[i].im += _source.stereo_r[i].im;
 					}
 					n ++;
 				}
 			}
 			for(int i = 0; i < Source.SAMPLES; i ++) {
-				this.l_channel[i].re /= n;
-				this.l_channel[i].im /= n;
-				this.r_channel[i].re /= n;
-				this.r_channel[i].im /= n;
+				this.stereo_l[i].re /= n;
+				this.stereo_l[i].im /= n;
+				this.stereo_r[i].re /= n;
+				this.stereo_r[i].im /= n;
+				this.mono[i].re = (this.stereo_l[i].re + this.stereo_r[i].re) / 2;
+				this.mono[i].im = (this.stereo_l[i].im + this.stereo_r[i].im) / 2;
 			}
-			Complex.fft(this.l_channel);
-			Complex.fft(this.r_channel);
+			Complex.fft(this.stereo_l);
+			Complex.fft(this.stereo_r);
+			Complex.fft(this.mono);
 			
 			this.update_context.canvas_w = this.canvas.getWidth();
 			this.update_context.canvas_h = this.canvas.getHeight();

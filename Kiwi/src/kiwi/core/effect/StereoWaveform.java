@@ -30,8 +30,8 @@ public class StereoWaveform extends Effect {
 				
 			for(int i = 0; i < Source.SAMPLES/2; i ++) {
 				
-				l_root = Math.pow(context.l_channel[i+Source.SAMPLES/2].re, 1/3.0);
-				r_root = Math.pow(context.l_channel[i+Source.SAMPLES/2].re, 1/3.0);
+				l_root = Math.pow(context.stereo_l[i+Source.SAMPLES/2].re, 1/3.0);
+				r_root = Math.pow(context.stereo_l[i+Source.SAMPLES/2].re, 1/3.0);
 				context.g2D.setColor(Color.WHITE);	
 				context.g2D.drawLine(
 						i*2,

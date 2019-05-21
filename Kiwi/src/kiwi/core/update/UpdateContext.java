@@ -4,17 +4,20 @@ import kiwi.math.Complex;
 
 public class UpdateContext {
 	public final Complex[]
-		l_channel,
-		r_channel;
+		stereo_l,
+		stereo_r,
+		mono;
 	public int
 		canvas_w,
 		canvas_h;
 	
 	public UpdateContext(
 			Complex[] l_channel,
-			Complex[] r_channel
+			Complex[] r_channel,
+			Complex[] mono_channel
 			) {
-		this.l_channel = l_channel;
-		this.r_channel = r_channel;
+		this.stereo_l = l_channel;
+		this.stereo_r = r_channel;
+		this.mono = mono_channel;
 	}
 }
