@@ -10,7 +10,9 @@ import java.awt.Graphics2D;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.MenuShortcut;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -52,6 +54,8 @@ public class Engine implements Runnable {
 				WINDOW_W, (this.window_w = 640),
 				WINDOW_H, (this.window_h = 480)
 				);
+	protected boolean
+		toggle_fullscreen;
 	protected Thread
 		thread;
 	protected long
@@ -170,7 +174,8 @@ public class Engine implements Runnable {
 		
 		Menu
 			m1 = new Menu("Effect"),
-			m2 = new Menu("Source");
+			m2 = new Menu("Source"),
+			m3 = new Menu("Window");
 		
 		for(Effect _effect: this.effects) {
 			MenuItem 
@@ -193,8 +198,15 @@ public class Engine implements Runnable {
 			m2.add(m2_i);
 		}
 		
+		MenuItem m3_i = new MenuItem("Toggle Fullscreen", new MenuShortcut(KeyEvent.VK_ENTER));
+		m3_i.addActionListener((ae) -> {
+			this.toggle_fullscreen = true;
+		});
+		m3.add(m3_i);
+		
 		this.menubar.add(m1);
-		this.menubar.add(m2);		
+		this.menubar.add(m2);	
+		this.menubar.add(m3);
 
 		this.window.setLocationRelativeTo(null);
 		this.window.setMenuBar(this.menubar);
@@ -208,6 +220,32 @@ public class Engine implements Runnable {
 	}
 	
 	private final void onUpdate() {
+		if(this.toggle_fullscreen) {			
+			this.window.dispose();			
+			this.window = new  Frame();
+			
+			this.window.setUndecorated(this.fullscreen = !this.fullscreen);
+			this.window.setSize(
+					this.fullscreen ? FULLSCREEN_W : this.window_w,
+					this.fullscreen ? FULLSCREEN_H : this.window_h
+					);		
+			this.window.setTitle(this.window_title);
+			
+			this.window.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent we) {
+					Engine.exit();
+				}
+			});
+			
+			this.window.add(this.canvas);
+			
+			this.window.setLocationRelativeTo(null);
+			this.window.setMenuBar(this.menubar);
+			this.window.setVisible(true);
+			
+			this.toggle_fullscreen = false;
+		}
 		if(this.effect != null) {
 			for(int i = 0; i < Source.SAMPLES; i ++) {
 				this.stereo_l[i].re = 0; this.stereo_l[i].im = 0;
