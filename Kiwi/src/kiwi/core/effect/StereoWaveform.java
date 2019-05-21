@@ -45,9 +45,9 @@ public class StereoWaveform extends Effect {
 				context.g2D.setColor(Color.WHITE);
 				context.g2D.drawLine(
 						i*2,
-						(int)(3*context.canvas_h/4+25*(r_root)),
+						(int)(3*context.canvas_h/4+25*(r_root-r_normal)),
 						i*2,
-						(int)(3*context.canvas_h/4-25*(r_root))
+						(int)(3*context.canvas_h/4-25*(r_root-r_normal))
 						);	
 				
 			}
