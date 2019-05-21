@@ -1,5 +1,7 @@
 package kiwi.math;
 
+import kiwi.util.Util;
+
 public class Complex {
 	private static float
 		PI = (float)Math.PI;
@@ -40,14 +42,6 @@ public class Complex {
     			this.re * b.im + this.im * b.re
     			);
     }
-    
-    public static float cos(float x) {
-    	return (float)Math.cos(x);
-    }
-    
-    public static float sin(float x) {
-    	return (float)Math.sin(x);
-    }
 	
 	public static void fft(Complex[] x) {
 		int n = x.length;
@@ -68,8 +62,8 @@ public class Complex {
             for (int k = 0; k < L/2; k ++) {
                 float kth = -2 * k * PI / L;
                 Complex w = new Complex(
-                		cos(kth), 
-                		sin(kth)
+                		Util.cos(kth), 
+                		Util.sin(kth)
                 		);
                 for (int j = 0; j < n/L; j++) {
                     Complex tao = w.mul(x[j*L + k + L/2]);

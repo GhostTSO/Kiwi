@@ -9,20 +9,24 @@ import kiwi.core.render.Renderable;
 import kiwi.core.update.UpdateContext;
 import kiwi.core.update.Updateable;
 
-public abstract class Style implements Renderable, Updateable {
-	public String
+public abstract class Effect implements Renderable, Updateable {
+	public final String
 		name;
 	
-	public static List<Style> getAvailableStyles() {
-		List<Style> list = new LinkedList<>();
+	public Effect(String name) {
+		this.name = name;
+	}
+	
+	public static List<Effect> getAvailableEffects() {
+		List<Effect> list = new LinkedList<>();
 		list.add(new StandardStyle());
 		return list;
 	}
 	
-	public static class StandardStyle extends Style {
+	public static class StandardStyle extends Effect {
 		
 		public StandardStyle() {
-			this.name = "Standard";
+			super("Standard");
 		}
 		
 		@Override
