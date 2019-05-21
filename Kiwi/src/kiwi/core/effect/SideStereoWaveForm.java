@@ -1,10 +1,8 @@
 package kiwi.core.effect;
 
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 
-import kiwi.util.Util;
 import kiwi.core.Effect;
 import kiwi.core.Source;
 import kiwi.core.render.RenderContext;
@@ -33,6 +31,8 @@ public class SideStereoWaveForm extends Effect{
 		double l_normal = Math.pow(context.stereo_l[Source.SAMPLES/2].re, 1/2.75);
 		double r_normal = Math.pow(context.stereo_r[Source.SAMPLES/2].re, 1/2.75);
 		
+		
+		double heightMultiplier = (double)context.canvas_h/20;
 		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 		
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
@@ -42,17 +42,17 @@ public class SideStereoWaveForm extends Effect{
 			context.g2D.setColor(Color.MAGENTA);	
 			context.g2D.drawLine(
 					(int)(canvasSpacing*i),
-					(int)(context.canvas_h/2+context.canvas_h/2* Util.map((float)(l_root-l_normal), 0, 1) ),
+					(int)(context.canvas_h/2+heightMultiplier*(l_root-l_normal)),
 					(int)(canvasSpacing*i),
-					(int)(context.canvas_h/2-25*(l_root-l_normal))
+					(int)(context.canvas_h/2-heightMultiplier*(l_root-l_normal))
 					);		
 			
 			context.g2D.setColor(Color.CYAN);
 			context.g2D.drawLine(
 					(int)(canvasSpacing*i)+context.canvas_w/2,
-					(int)(context.canvas_h/2+25*(r_root-r_normal)),
+					(int)(context.canvas_h/2+heightMultiplier*(r_root-r_normal)),
 					(int)(canvasSpacing*i)+context.canvas_w/2,
-					(int)(context.canvas_h/2-25*(r_root-r_normal))
+					(int)(context.canvas_h/2-heightMultiplier*(r_root-r_normal))
 					);	
 			
 		}

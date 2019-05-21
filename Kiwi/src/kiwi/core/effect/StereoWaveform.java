@@ -25,6 +25,8 @@ public class StereoWaveform extends Effect {
 					context.canvas_h
 					);			
 			
+			double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
+			
 			double l_root;
 			double r_root;
 			double l_normal = Math.pow(context.stereo_l[Source.SAMPLES/2].re, 1/2.75);
@@ -37,17 +39,17 @@ public class StereoWaveform extends Effect {
 
 				context.g2D.setColor(Color.WHITE);	
 				context.g2D.drawLine(
-						i*2,
+						(int) (canvasSpacing*i),
 						(int)(context.canvas_h/4+25*(l_root-l_normal)),
-						i*2,
+						(int) (canvasSpacing*i),
 						(int)(context.canvas_h/4-25*(l_root-l_normal))
 						);		
 				
 				context.g2D.setColor(Color.WHITE);
 				context.g2D.drawLine(
-						i*2,
+						(int) (canvasSpacing*i),
 						(int)(3*context.canvas_h/4+25*(r_root-r_normal)),
-						i*2,
+						(int) (canvasSpacing*i),
 						(int)(3*context.canvas_h/4-25*(r_root-r_normal))
 						);	
 				
