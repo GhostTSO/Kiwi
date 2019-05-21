@@ -34,15 +34,15 @@ public class Source {
 		line;
 	
 	public final Complex[]
-		l_channel = new Complex[SAMPLES],
-		r_channel = new Complex[SAMPLES];
+		stereo_l = new Complex[SAMPLES],
+		stereo_r = new Complex[SAMPLES];
 	
 	public Source(String name, TargetDataLine line) {
 		this.name = name;
 		this.line = line;
 		for(int i = 0; i < SAMPLES; i ++) {
-			l_channel[i] = new Complex();
-			r_channel[i] = new Complex();
+			stereo_l[i] = new Complex();
+			stereo_r[i] = new Complex();
 		}
 	}
 	
@@ -51,8 +51,8 @@ public class Source {
 		line.read( b, 0, b.length);		
 		for(int i = 0; i < SAMPLES; i ++) {
 			int j = i * 4;
-			l_channel[i].re = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff)); l_channel[i].im = 0;
-			r_channel[i].re = (short)((b[j + 2] << 8) | (b[j + 3] & 0xff)); r_channel[i].im = 0;
+			stereo_l[i].re = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff)); stereo_l[i].im = 0;
+			stereo_r[i].re = (short)((b[j + 2] << 8) | (b[j + 3] & 0xff)); stereo_r[i].im = 0;
 		}
 	}
 	

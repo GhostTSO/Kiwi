@@ -6,8 +6,9 @@ import kiwi.math.Complex;
 
 public class RenderContext {
 	public final Complex[]
-		l_channel,
-		r_channel;
+		stereo_l,
+		stereo_r,
+		mono;
 	public int
 		canvas_w,
 		canvas_h;
@@ -15,10 +16,12 @@ public class RenderContext {
 		g2D;
 	
 	public RenderContext(
-			Complex[] l_channel,
-			Complex[] r_channel
+			Complex[] stereo_l,
+			Complex[] stereo_r,
+			Complex[] mono
 			) {
-		this.l_channel = l_channel;
-		this.r_channel = r_channel;
+		this.stereo_l = stereo_l;
+		this.stereo_r = stereo_r;
+		this.mono = mono;
 	}
 }
