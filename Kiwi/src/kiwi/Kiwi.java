@@ -1,6 +1,5 @@
 package kiwi;
 
-import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
@@ -18,8 +17,7 @@ import java.util.List;
 
 import kiwi.core.Media;
 import kiwi.core.Style;
-import kiwi.math.Complex;
-import kiwi.util.Util;
+import kiwi.math.Vector;
 import themes.Theme;
 
 public class Kiwi {
@@ -27,7 +25,7 @@ public class Kiwi {
 		PRIMARY_DISPLAY_W = Toolkit.getDefaultToolkit().getScreenSize().width,
 		PRIMARY_DISPLAY_H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	public static final Version
-		VERSION = new Version("Kiwi", 0, 0, 2);
+		VERSION = new Version("Kiwi", 0, 0, 3);
 
 	public static boolean
 		FULLSCREEN = false;
@@ -181,38 +179,31 @@ public class Kiwi {
 	}
 	
 	private static int
-		s = 1024;
-	private static Complex[]
-		l_channel,
-		r_channel,
-		last_l_channel = new Complex[s],
-		last_r_channel = new Complex[s];
-	private static short[]
-		l_channel_buffer = new short[s],
-		r_channel_buffer = new short[s];
+		s = 16;
+	private static Vector[]
+		l_channel = new Vector[s],
+		r_channel = new Vector[s];
 			
 	public static final void update() {
-		media.get(2).poll(
-				l_channel_buffer,
-				r_channel_buffer
+		media.get(3).poll(
+				l_channel,
+				r_channel
 				);
-		l_channel = Util.fft(l_channel_buffer);
-		r_channel = Util.fft(r_channel_buffer);
+		Vector.fft(l_channel);
+		Vector.fft(r_channel);
 	}
 	
 	private static BufferStrategy
 		bs;
 	public static final void render() {
 		if(bs == null || bs.contentsLost()) {
-			canvas.createBufferStrategy(2);
+			canvas.createBufferStrategy( 2);
 			bs = canvas.getBufferStrategy();
 		}
 		Graphics2D g2D = (Graphics2D)bs.getDrawGraphics();
-		
+
 		Theme.standardView(canvas, g2D, l_channel, r_channel, s);
 		
-		last_l_channel = l_channel;
-		last_r_channel = r_channel;
 		g2D.dispose();
 		bs.show();
 	}
