@@ -7,7 +7,7 @@ public class Util {
 	}
 	
 	public static final float map(float x, float a, float b, float c, float d) {
-		return (x - a) / (b - a) * (d - c) + c;
+		return Util.map(x, a, b) * (d - c) + c;
 	}
 	
 	public static final float map_tanh(float x, float a, float b, float r) {

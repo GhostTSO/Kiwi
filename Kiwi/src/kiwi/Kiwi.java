@@ -1,6 +1,7 @@
 package kiwi;
 
 import kiwi.core.Engine;
+import kiwi.core.Source;
 
 public class Kiwi {
 	
