@@ -11,6 +11,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
+import kiwi.math.Vector;
+
 public class Media {
 	public static final AudioFormat
 		FORMAT = new AudioFormat(
@@ -47,8 +49,8 @@ public class Media {
 	}
 	
 	public void poll(
-			short[] l_channel,
-			short[] r_channel
+			Vector[] l_channel,
+			Vector[] r_channel
 			) {
 		int s = Math.min(
 				l_channel.length,
@@ -58,20 +60,20 @@ public class Media {
 		line.read( b, 0, b.length);		
 		for(int i = 0; i < s; i ++) {
 			int j = i * 4;
-			l_channel[i] = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff));
-			r_channel[i] = (short)((b[j + 2] << 8) | (b[j + 3] & 0xff));
+			l_channel[i].X = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff)); l_channel[i].Y = 0;
+			r_channel[i].X = (short)((b[j + 2] << 8) | (b[j + 3] & 0xff)); l_channel[i].Y = 0;
 		}
 	}
 	
 	public void poll(
-			short[] channel
+			Vector[] channel
 			) {
 		int s = channel.length;
 		byte[] b = new byte[s * 2];
 		line.read( b, 0, b.length);
 		for(int i = 0; i < s; i ++) {
 			int j = i * 2;
-			channel[i] = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff));
+			channel[i].X = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff)); channel[i].Y = 0;
 		}		
 	}
 	

@@ -17,15 +17,14 @@ import java.util.List;
 
 import kiwi.core.Media;
 import kiwi.core.Style;
-import kiwi.math.Complex;
-import kiwi.util.Util;
+import kiwi.math.Vector;
 
 public class Kiwi {
 	public static final int
 		PRIMARY_DISPLAY_W = Toolkit.getDefaultToolkit().getScreenSize().width,
 		PRIMARY_DISPLAY_H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	public static final Version
-		VERSION = new Version("Kiwi", 0, 0, 2);
+		VERSION = new Version("Kiwi", 0, 0, 3);
 
 	public static boolean
 		FULLSCREEN = false;
@@ -180,20 +179,17 @@ public class Kiwi {
 	
 	private static int
 		s = 16;
-	private static Complex[]
-		l_channel,
-		r_channel;
-	private static short[]
-		l_channel_buffer = new short[s],
-		r_channel_buffer = new short[s];
+	private static Vector[]
+		l_channel = new Vector[s],
+		r_channel = new Vector[s];
 			
 	public static final void update() {
 		media.get(3).poll(
-				l_channel_buffer,
-				r_channel_buffer
+				l_channel,
+				r_channel
 				);
-		l_channel = Util.fft(l_channel_buffer);
-		r_channel = Util.fft(r_channel_buffer);
+		Vector.fft(l_channel);
+		Vector.fft(r_channel);
 	}
 	
 	private static BufferStrategy
@@ -211,15 +207,6 @@ public class Kiwi {
 				canvas.getWidth(),
 				canvas.getHeight()
 				);
-		
-		g2D.setColor(Color.WHITE);		
-		for(int i = 0; i < l_channel.length; i ++)
-			g2D.drawLine(
-					(int)l_channel[i].re - 1,
-					(int)l_channel[i].im,
-					(int)l_channel[i].re + 1,
-					(int)l_channel[i].im
-					);
 		
 		g2D.dispose();
 		bs.show();
