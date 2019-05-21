@@ -1,12 +1,18 @@
 package kiwi;
 
 import java.awt.Canvas;
+import java.awt.CheckboxMenuItem;
 import java.awt.Frame;
+import java.awt.Menu;
+import java.awt.MenuBar;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
+import kiwi.core.Media;
+import kiwi.core.Style;
 import kiwi.util.Util;
 
 public class Kiwi {
@@ -19,7 +25,7 @@ public class Kiwi {
 		WINDOW_W = 640,
 		WINDOW_H = 480;
 	public static int
-		FPS = 60;	
+		FPS = 60;
 	
 	private static boolean
 		init,
@@ -29,6 +35,13 @@ public class Kiwi {
 		window;
 	private static Canvas
 		canvas;
+	private static MenuBar
+		menubar;
+	
+	private static List<Media>
+		media;
+	private static List<Style>
+		style;
 	
 	
 	public static void main(String[] args) {
@@ -38,12 +51,35 @@ public class Kiwi {
 		Kiwi.exit();
 	}
 	
+	
+	
 	public static final void init() {
 		if(!init) {
 			window = new  Frame();
-			canvas = new Canvas();
-			
+			canvas = new Canvas();				
 			window.add(canvas);
+			
+
+			menubar = new MenuBar();			
+			
+			media = Media.getAvailableMedia();
+			
+			Menu
+				m1 = new Menu("Style"),
+				m2 = new Menu("Media");
+			
+			for(Media media: Kiwi.media) { 
+				CheckboxMenuItem cbmi = new CheckboxMenuItem(media.name, true);
+				cbmi.addActionListener((ae) -> {
+					media.enable(cbmi.getState());
+				});
+				m2.add(cbmi);
+			};
+			
+			menubar.add(m1);
+			menubar.add(m2);
+			
+			window.setMenuBar(menubar);			
 			
 			int
 				window_w = WINDOW_W,
@@ -53,15 +89,16 @@ public class Kiwi {
 				window_w = Util.PRIMARY_DISPLAY_W;
 				window_h = Util.PRIMARY_DISPLAY_H;
 				window.setUndecorated(true);
-			}
+			}		
 			
 			window.setSize(
 					window_w,
 					window_h
 					);
 			window.setLocationRelativeTo(null);
-			window.setVisible(true);
 			
+
+			window.setVisible(true);			
 
 			window.addWindowListener(new WindowAdapter() {
 				@Override
@@ -94,6 +131,8 @@ public class Kiwi {
 					t_elapsed = 0,
 					fps = 0,
 					t1 = System.nanoTime();
+				for(Media media: Kiwi.media)
+					media.enable(true);
 				while(loop) {
 					long
 						t2 = System.nanoTime(),
@@ -120,7 +159,6 @@ public class Kiwi {
 	}
 	
 	public static final void stop() {
-		System.out.println("Stop");
 		if( loop) {
 			loop = false;
 		}
@@ -132,13 +170,13 @@ public class Kiwi {
 		}
 	}
 	
-	public static final void render() {
+	public static final void update() {
 		
 	}
 	
-	public static final void update() {
+	public static final void render() {
 		
-	}	
+	}
 	
 	public static class Version {
 		public final String
