@@ -17,7 +17,6 @@ import java.util.List;
 import kiwi.core.Media;
 import kiwi.core.Style;
 import kiwi.math.Complex;
-import kiwi.math.Vector;
 import themes.Theme;
 
 public class Kiwi {
