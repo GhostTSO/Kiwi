@@ -181,10 +181,20 @@ public class Kiwi {
 	private static int
 		s = 16;
 	private static Vector[]
-		l_channel = new Vector[s],
-		r_channel = new Vector[s];
+		l_channel,
+		r_channel;
 			
 	public static final void update() {
+		if(l_channel == null) {
+			l_channel = new Vector[s];
+			for(int i = 0; i < s; i ++)
+				l_channel[i] = new Vector();
+		}
+		if(r_channel == null) {
+			r_channel = new Vector[s];
+			for(int i = 0; i < s; i ++)
+				r_channel[i] = new Vector();
+		}
 		media.get(3).poll(
 				l_channel,
 				r_channel

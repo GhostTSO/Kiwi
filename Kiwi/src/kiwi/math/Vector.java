@@ -5,6 +5,10 @@ public class Vector {
 		X,
 		Y;
 	
+	public Vector() {
+		//do nothing
+	}
+	
 	public Vector(float x, float y) {
 		this.X = x;
 		this.Y = y;
