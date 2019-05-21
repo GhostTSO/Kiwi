@@ -1,6 +1,15 @@
 package kiwi.util;
 
 public class Util {
+	
+	public static final float map(float x, float a, float b) {
+		return Util.map(x, a, b, 0f, 1f);
+	}
+	
+	public static final float map(float x, float a, float b, float c, float d) {
+		return (x - a) / (b - a) * (d - c);
+	}	
+	
 	public static final float sin(float x) {
 		return (float)java.lang.Math.sin(x);
 	}
