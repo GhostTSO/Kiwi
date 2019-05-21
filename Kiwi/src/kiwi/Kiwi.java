@@ -1,5 +1,6 @@
 package kiwi;
 
+import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.CheckboxMenuItem;
 import java.awt.Color;
@@ -19,6 +20,7 @@ import kiwi.core.Media;
 import kiwi.core.Style;
 import kiwi.math.Complex;
 import kiwi.util.Util;
+import themes.Theme;
 
 public class Kiwi {
 	public static final int
@@ -179,16 +181,18 @@ public class Kiwi {
 	}
 	
 	private static int
-		s = 16;
+		s = 1024;
 	private static Complex[]
 		l_channel,
-		r_channel;
+		r_channel,
+		last_l_channel = new Complex[s],
+		last_r_channel = new Complex[s];
 	private static short[]
 		l_channel_buffer = new short[s],
 		r_channel_buffer = new short[s];
 			
 	public static final void update() {
-		media.get(3).poll(
+		media.get(2).poll(
 				l_channel_buffer,
 				r_channel_buffer
 				);
@@ -200,27 +204,15 @@ public class Kiwi {
 		bs;
 	public static final void render() {
 		if(bs == null || bs.contentsLost()) {
-			canvas.createBufferStrategy( 2);
+			canvas.createBufferStrategy(2);
 			bs = canvas.getBufferStrategy();
 		}
 		Graphics2D g2D = (Graphics2D)bs.getDrawGraphics();
-		g2D.setColor(Color.BLACK);
-		g2D.fillRect(
-				0,
-				0,
-				canvas.getWidth(),
-				canvas.getHeight()
-				);
 		
-		g2D.setColor(Color.WHITE);		
-		for(int i = 0; i < l_channel.length; i ++)
-			g2D.drawLine(
-					(int)l_channel[i].re - 1,
-					(int)l_channel[i].im,
-					(int)l_channel[i].re + 1,
-					(int)l_channel[i].im
-					);
+		Theme.standardView(canvas, g2D, l_channel, r_channel, s);
 		
+		last_l_channel = l_channel;
+		last_r_channel = r_channel;
 		g2D.dispose();
 		bs.show();
 	}
