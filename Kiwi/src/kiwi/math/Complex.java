@@ -1,6 +1,6 @@
-package Math;
+package kiwi.math;
 
-class Complex {
+public class Complex {
     public final double re;
     public final double im;
  
@@ -21,9 +21,11 @@ class Complex {
         return new Complex(this.re - b.re, this.im - b.im);
     }
  
-    public Complex mult(Complex b) {
-        return new Complex(this.re * b.re - this.im * b.im,
-                this.re * b.im + this.im * b.re);
+    public Complex mul(Complex b) {
+        return new Complex(
+        		this.re * b.re - this.im * b.im,
+                this.re * b.im + this.im * b.re
+                );
     }
  
     @Override

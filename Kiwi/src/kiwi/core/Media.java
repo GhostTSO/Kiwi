@@ -19,7 +19,7 @@ public class Media {
 				 16,
 				 2,
 				 4, 
-				 60, 
+				 48000, 
 				 true
 				);
 	public final String
@@ -36,7 +36,9 @@ public class Media {
 		if(enable) {
 			try {
 				this.line.open(FORMAT);
+				this.line.start();
 			} catch (LineUnavailableException lue) {
+				lue.printStackTrace();
 			}
 		} else {
 			this.line.close();

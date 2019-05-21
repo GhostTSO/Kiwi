@@ -2,22 +2,30 @@ package kiwi;
 
 import java.awt.Canvas;
 import java.awt.CheckboxMenuItem;
+import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.Menu;
 import java.awt.MenuBar;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferStrategy;
 import java.util.List;
 
 import kiwi.core.Media;
 import kiwi.core.Style;
+import kiwi.math.Complex;
 import kiwi.util.Util;
 
 public class Kiwi {
+	public static final int
+		PRIMARY_DISPLAY_W = Toolkit.getDefaultToolkit().getScreenSize().width,
+		PRIMARY_DISPLAY_H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	public static final Version
-		VERSION = new Version("Kiwi", 0, 0, 1);
+		VERSION = new Version("Kiwi", 0, 0, 2);
 
 	public static boolean
 		FULLSCREEN = false;
@@ -86,8 +94,8 @@ public class Kiwi {
 				window_h = WINDOW_H;
 			
 			if(FULLSCREEN) {
-				window_w = Util.PRIMARY_DISPLAY_W;
-				window_h = Util.PRIMARY_DISPLAY_H;
+				window_w = PRIMARY_DISPLAY_W;
+				window_h = PRIMARY_DISPLAY_H;
 				window.setUndecorated(true);
 			}		
 			
@@ -170,12 +178,51 @@ public class Kiwi {
 		}
 	}
 	
+	private static int
+		s = 16;
+	private static Complex[]
+		l_channel,
+		r_channel;
+	private static short[]
+		l_channel_buffer = new short[s],
+		r_channel_buffer = new short[s];
+			
 	public static final void update() {
-		
+		media.get(3).poll(
+				l_channel_buffer,
+				r_channel_buffer
+				);
+		l_channel = Util.fft(l_channel_buffer);
+		r_channel = Util.fft(r_channel_buffer);
 	}
 	
+	private static BufferStrategy
+		bs;
 	public static final void render() {
+		if(bs == null || bs.contentsLost()) {
+			canvas.createBufferStrategy( 2);
+			bs = canvas.getBufferStrategy();
+		}
+		Graphics2D g2D = (Graphics2D)bs.getDrawGraphics();
+		g2D.setColor(Color.BLACK);
+		g2D.fillRect(
+				0,
+				0,
+				canvas.getWidth(),
+				canvas.getHeight()
+				);
 		
+		g2D.setColor(Color.WHITE);		
+		for(int i = 0; i < l_channel.length; i ++)
+			g2D.drawLine(
+					(int)l_channel[i].re - 1,
+					(int)l_channel[i].im,
+					(int)l_channel[i].re + 1,
+					(int)l_channel[i].im
+					);
+		
+		g2D.dispose();
+		bs.show();
 	}
 	
 	public static class Version {
