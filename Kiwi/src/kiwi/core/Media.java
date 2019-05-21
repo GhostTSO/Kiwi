@@ -11,17 +11,22 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
+import kiwi.math.Complex;
+
 public class Media {
+	public static final int
+		SAMPLERATE = 44000 / 2;
 	public static final AudioFormat
 		FORMAT = new AudioFormat(
 				Encoding.PCM_SIGNED,
-				 44000,
+				 SAMPLERATE,
 				 16,
 				 2,
 				 4, 
-				 44000, 
+				 SAMPLERATE,
 				 true
 				);
+	
 	public final String
 		name;
 	public final TargetDataLine
@@ -47,8 +52,8 @@ public class Media {
 	}
 	
 	public void poll(
-			short[] l_channel,
-			short[] r_channel
+			Complex[] l_channel,
+			Complex[] r_channel
 			) {
 		int s = Math.min(
 				l_channel.length,
@@ -58,24 +63,12 @@ public class Media {
 		line.read( b, 0, b.length);		
 		for(int i = 0; i < s; i ++) {
 			int j = i * 4;
-			l_channel[i] = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff));
-			r_channel[i] = (short)((b[j + 2] << 8) | (b[j + 3] & 0xff));
+			l_channel[i].re = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff)); l_channel[i].im = 0;
+			r_channel[i].re = (short)((b[j + 2] << 8) | (b[j + 3] & 0xff)); r_channel[i].im = 0;
 		}
 	}
 	
-	public void poll(
-			short[] channel
-			) {
-		int s = channel.length;
-		byte[] b = new byte[s * 2];
-		line.read( b, 0, b.length);
-		for(int i = 0; i < s; i ++) {
-			int j = i * 2;
-			channel[i] = (short)((b[j + 0] << 8) | (b[j + 1] & 0xff));
-		}		
-	}
-	
-	public static final List<Media> getAvailableMedia() {
+	public static final List<Media> getAvailableMedias() {
 		List<Media> media = new LinkedList<>();
 		for(Mixer.Info mixer_info: AudioSystem.getMixerInfo()) {
 			Mixer mixer = AudioSystem.getMixer(mixer_info);

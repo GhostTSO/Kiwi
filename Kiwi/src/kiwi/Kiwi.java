@@ -6,6 +6,7 @@ import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.Menu;
 import java.awt.MenuBar;
+import java.awt.MenuItem;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -16,15 +17,16 @@ import java.util.List;
 
 import kiwi.core.Media;
 import kiwi.core.Style;
+import kiwi.core.render.RenderContext;
+import kiwi.core.update.UpdateContext;
 import kiwi.math.Complex;
-import themes.Theme;
 
 public class Kiwi {
 	public static final int
 		PRIMARY_DISPLAY_W = Toolkit.getDefaultToolkit().getScreenSize().width,
 		PRIMARY_DISPLAY_H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	public static final Version
-		VERSION = new Version("Kiwi", 0, 0, 4);
+		VERSION = new Version("Kiwi", 0, 0, 5);
 
 	public static boolean
 		FULLSCREEN = false;
@@ -45,10 +47,12 @@ public class Kiwi {
 	private static MenuBar
 		menubar;
 	
-	private static List<Media>
-		media;
-	private static List<Style>
+	private static Style
 		style;
+	private static List<Style>
+		styles;
+	private static List<Media>
+		medias;
 	
 	
 	public static void main(String[] args) {
@@ -64,29 +68,49 @@ public class Kiwi {
 		if(!init) {
 			window = new  Frame();
 			canvas = new Canvas();				
-			window.add(canvas);
-			
+			window.add(canvas);			
 
 			menubar = new MenuBar();			
 			
-			media = Media.getAvailableMedia();
+			styles = Style.getAvailableStyles();
+			medias = Media.getAvailableMedias();
 			
 			Menu
 				m1 = new Menu("Style"),
 				m2 = new Menu("Media");
 			
-			for(Media media: Kiwi.media) { 
-				CheckboxMenuItem cbmi = new CheckboxMenuItem(media.name, true);
-				cbmi.addActionListener((ae) -> {
-					media.enable(cbmi.getState());
+			for(Style style: Kiwi.styles) {
+				MenuItem mi = new MenuItem(style.name);
+				mi.addActionListener((ae) -> {
+					Kiwi.style = style;
 				});
-				m2.add(cbmi);
+				m1.add(mi);
+			}
+			
+			for(Media media: Kiwi.medias) { 
+				CheckboxMenuItem mi = new CheckboxMenuItem(media.name, false);
+				mi.addItemListener((ie) -> {
+					media.enable(mi.getState());
+				});
+				m2.add(mi);
 			};
 			
 			menubar.add(m1);
 			menubar.add(m2);
 			
-			window.setMenuBar(menubar);			
+			window.setMenuBar(menubar);	
+			
+			l_channel = new Complex[samples];
+			r_channel = new Complex[samples];
+			_l_channel = new Complex[samples];
+			_r_channel = new Complex[samples];
+			
+			for(int i = 0; i < samples; i ++) {
+				l_channel[i] = new Complex();
+				r_channel[i] = new Complex();
+				_l_channel[i] = new Complex();
+				_r_channel[i] = new Complex();
+			}
 			
 			int
 				window_w = WINDOW_W,
@@ -138,8 +162,6 @@ public class Kiwi {
 					t_elapsed = 0,
 					fps = 0,
 					t1 = System.nanoTime();
-				for(Media media: Kiwi.media)
-					media.enable(true);
 				while(loop) {
 					long
 						t2 = System.nanoTime(),
@@ -175,39 +197,81 @@ public class Kiwi {
 		if( init) {
 			window.dispose();
 		}
-	}
+	}	
+
 	
 	private static int
-		s = 512;
+		samples = 512;
 	private static Complex[]
 		l_channel,
-		r_channel;
-	private static short[]
-		l_channel_buffer = new short[s],
-		r_channel_buffer = new short[s];
-			
+		r_channel,
+		_l_channel,
+		_r_channel;
+	
+	private static final UpdateContext
+		update_context = new UpdateContext();
 	public static final void update() {
-		media.get(3).poll(
-				l_channel_buffer,
-				r_channel_buffer
-				);
-		l_channel = Complex.fft(l_channel_buffer);
-		r_channel = Complex.fft(r_channel_buffer);
+		if(style != null) {
+			int n = 0;
+			for(int i = 0; i < samples; i ++) {
+				l_channel[i].re = 0; l_channel[i].im = 0;
+				r_channel[i].re = 0; r_channel[i].im = 0;
+			}
+			for(Media media: Kiwi.medias) {
+				if(media.line.isOpen()) {
+					media.poll(
+							_l_channel,
+							_r_channel
+							);
+					for(int i = 0; i < samples; i ++) {
+						l_channel[i] = l_channel[i].add(_l_channel[i]);
+						r_channel[i] = r_channel[i].add(_r_channel[i]);
+					}
+					n ++;					
+				}
+			}
+			for(int i = 0; i < samples; i ++) {
+				l_channel[i].re /= n; l_channel[i].im /= n;
+				r_channel[i].re /= n; r_channel[i].im /= n;
+			}
+			Complex.fft(l_channel);
+			Complex.fft(r_channel);
+			
+			update_context.samples = samples;
+			update_context.l_channel = l_channel;
+			update_context.r_channel = r_channel;
+			update_context.canvas_w = canvas.getWidth();
+			update_context.canvas_h = canvas.getHeight();
+			
+			style.update(update_context);
+		}
 	}
 	
-	private static BufferStrategy
-		bs;
-	public static final void render() {
-		if(bs == null || bs.contentsLost()) {
-			canvas.createBufferStrategy( 2);
-			bs = canvas.getBufferStrategy();
-		}
-		Graphics2D g2D = (Graphics2D)bs.getDrawGraphics();
 
-		Theme.standardView(canvas, g2D, l_channel, r_channel, s);
-		
-		g2D.dispose();
-		bs.show();
+	private static BufferStrategy
+		buffer_strategy;
+	private static final RenderContext
+		render_context = new RenderContext();
+	public static final void render() {
+		if(style != null) {
+			if(buffer_strategy == null || buffer_strategy.contentsLost()) {
+				canvas.createBufferStrategy(2);
+				buffer_strategy = canvas.getBufferStrategy();
+			}
+			Graphics2D g2D = (Graphics2D)buffer_strategy.getDrawGraphics();
+			
+			render_context.g2D = g2D;			
+			render_context.samples = samples;
+			render_context.l_channel = l_channel;
+			render_context.r_channel = r_channel;
+			render_context.canvas_w = canvas.getWidth();
+			render_context.canvas_h = canvas.getHeight();		
+			
+			style.render(render_context);			
+			
+			g2D.dispose();
+			buffer_strategy.show();
+		}
 	}
 	
 	public static class Version {
