@@ -16,8 +16,14 @@ public class FastFourierTransform {
         return ((reversedN << count) & ((1 << bits) - 1));
     }
  
-    static short[] fft(Complex[] buffer) {
+    static Complex[] fft(short[] channelInfo) {
  
+    	Complex[] buffer = new Complex[channelInfo.length];
+    	
+    	for(int i = 0; i < buffer.length; i++) {
+    		buffer[i] = new Complex((double) channelInfo[i], 0.0);
+    	}
+    	
         int bits = (int) (Math.log(buffer.length) / Math.log(2));
         for (int j = 1; j < buffer.length / 2; j++) {
  
@@ -45,12 +51,7 @@ public class FastFourierTransform {
             }
         }
         
-        short[] results = new short[buffer.length];
-        for(int i = 0; i < buffer.length; i++) {
-        	results[i] = (short) buffer[i].im;
-        }
-        
-        return results;
+        return buffer;
     }
 }
 
