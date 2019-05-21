@@ -12,7 +12,6 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
 import kiwi.math.Complex;
-import kiwi.util.Util;
 
 public class Source {
 	public static final int
