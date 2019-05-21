@@ -6,11 +6,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import kiwi.math.Complex;
-import kiwi.math.Vector;
 
 public class Theme {
 
-	public static final void standardView (Canvas canvas, Graphics2D g2D, Vector[] l_channel, Vector[] r_channel, int s) {
+	public static final void standardView (Canvas canvas, Graphics2D g2D, Complex[] l_channel, Complex[] r_channel, int s) {
 		g2D.setColor(Color.BLACK);
 		g2D.setStroke(new BasicStroke(2));
 		g2D.fillRect(
@@ -25,17 +24,17 @@ public class Theme {
 			g2D.setColor(Color.WHITE);	
 			g2D.drawLine(
 					i,
-					(int)(canvas.getHeight()/4+(l_channel[i].X/50)),
+					(int)(canvas.getHeight()/4+(l_channel[i].re)),
 					i,
-					(int)(canvas.getHeight()/4-(l_channel[i].X/50))
-					);	
+					(int)(canvas.getHeight()/4-(l_channel[i].re))
+					);		
 			
 			g2D.setColor(Color.WHITE);
 			g2D.drawLine(
 					i,
-					(int)(3*canvas.getHeight()/4+(r_channel[i].X/50)),
+					(int)(3*canvas.getHeight()/4+(r_channel[i].re)),
 					i,
-					(int)(3*canvas.getHeight()/4-(r_channel[i].X/50))
+					(int)(3*canvas.getHeight()/4-(r_channel[i].re))
 					);	
 			
 		}
