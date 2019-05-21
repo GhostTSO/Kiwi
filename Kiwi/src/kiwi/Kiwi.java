@@ -5,7 +5,7 @@ import kiwi.core.Engine;
 public class Kiwi {
 	
 	public static final Version
-		VERSION = new Version("Kiwi", 1, 0, 1);
+		VERSION = new Version("Kiwi", 1, 0, 2);
 	
 	public static void main(String[] args) {
 		Engine.getConfig().set(Engine.DEBUG, true);

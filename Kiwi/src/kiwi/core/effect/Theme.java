@@ -1,4 +1,4 @@
-package themes;
+package kiwi.core.effect;
 
 import java.awt.BasicStroke;
 import java.awt.Canvas;
