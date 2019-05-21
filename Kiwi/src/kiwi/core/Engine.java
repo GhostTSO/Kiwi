@@ -81,14 +81,12 @@ public class Engine implements Runnable {
 	protected final UpdateContext
 		update_context = new UpdateContext(
 				this.l_channel,
-				this.r_channel,
-				Source.SAMPLES
+				this.r_channel
 				);
 	protected final RenderContext
 		render_context = new RenderContext(
 				this.l_channel,
-				this.r_channel,
-				Source.SAMPLES
+				this.r_channel
 				);
 	protected BufferStrategy
 		buffer_strategy;
@@ -324,7 +322,7 @@ public class Engine implements Runnable {
 				elapsed += dt;				
 				if(t_elapsed >= t_time) {
 					this.onUpdate();
-					t_elapsed = 0;
+					t_elapsed= 0;
 					t_ct ++;
 				}
 				if(f_elapsed >= f_time) {
