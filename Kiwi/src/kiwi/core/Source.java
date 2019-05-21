@@ -12,7 +12,6 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 
 import kiwi.math.Complex;
-import kiwi.util.Util;
 
 public class Source {
 	public static final int
@@ -71,12 +70,20 @@ public class Source {
 		this.line.flush();
 	}
 	
-	public static float hz(int sample) {
-		if(sample < 0)
-			sample = 0;
-		if(sample >= SAMPLES / 2)
-			sample = SAMPLES / 2 - 1;
-		return sample * SAMPLERATE / SAMPLES;
+	public static float indexToHz(int index) {
+		if(index < 0)
+			index = 0;
+		if(index >= SAMPLES / 2)
+			index = SAMPLES / 2;
+		return index * SAMPLERATE / SAMPLES;
+	}
+	
+	public static int hzToIndex(float hz) {
+		if(hz < 0)
+			hz = 0;
+		if(hz >= SAMPLERATE / 2)
+			hz = SAMPLERATE / 2;
+		return (int)(hz / SAMPLERATE * SAMPLES);
 	}
 	
 	public static final List<Source> getAvailableSources() {
