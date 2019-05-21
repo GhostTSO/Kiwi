@@ -1,8 +1,8 @@
 package kiwi.math;
 
 public class Complex {
-    public final double re;
-    public final double im;
+    public double re;
+    public double im;
  
     public Complex() {
         this(0, 0);
