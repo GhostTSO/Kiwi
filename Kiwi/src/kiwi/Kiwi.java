@@ -8,7 +8,6 @@ public class Kiwi {
 		VERSION = new Version("Kiwi", 1, 0, 4);
 	
 	public static void main(String[] args) {
-		Engine.getConfig().set(Engine.DEBUG, true);
 		Engine.init();
 	}
 	
