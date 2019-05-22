@@ -38,7 +38,7 @@ public class SideStereoWaveForm extends Effect{
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
 			
 			l_root = Math.pow(context.stereo_l[i+3*Source.SAMPLES/4].re, 1/2.75);
-			r_root = Math.pow(context.stereo_r[i].re, 1/2.75);
+			r_root = Math.pow(context.stereo_r[i+1].re, 1/2.75);
 			context.g2D.setColor(Color.MAGENTA);	
 			context.g2D.drawLine(
 					(int)(canvasSpacing*i),

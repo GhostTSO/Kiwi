@@ -1,7 +1,6 @@
 package kiwi.core.effect;
 
 import java.awt.BasicStroke;
-import java.awt.Canvas;
 import java.awt.Color;
 
 import kiwi.core.Effect;

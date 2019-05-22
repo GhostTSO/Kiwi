@@ -1,7 +1,6 @@
 package kiwi.core.effect;
 
 import java.awt.BasicStroke;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.RenderingHints;
 
@@ -9,8 +8,6 @@ import kiwi.core.Effect;
 import kiwi.core.Source;
 import kiwi.core.render.RenderContext;
 import kiwi.core.update.UpdateContext;
-import kiwi.util.Util;
-
 public class Circularity extends Effect{
 	
 	double[] peaksLeft = new double[Source.SAMPLES/4];
