@@ -63,15 +63,19 @@ public class InvertedCircularity extends Effect{
 			if(heightMultiplier*(l_root-l_normal) > peaksLeft[i]) {
 				peaksLeft[i] = (heightMultiplier*(l_root-l_normal));
 			}
-			else if(peaksLeft[i] > 0){
-				peaksLeft[i]-=4;
+			else if(peaksLeft[i] > 4){
+				peaksLeft[i]-=2;
+			}else if(peaksLeft[i] <= 4) {
+				peaksLeft[i] = 0;
 			}
 			
 			if(heightMultiplier*(r_root-r_normal) > peaksRight[i]) {
 				peaksRight[i] = (heightMultiplier*(r_root-r_normal));
 			}
-			else if(peaksRight[i] > 0){
-				peaksRight[i]-=4;
+			else if(peaksRight[i] > 4){
+				peaksRight[i]-=2;
+			}else if(peaksRight[i] <= 4) {
+				peaksRight[i] = 0;
 			}
 			
 			degree = (float)((this.degree+i*Math.PI)/256.0);
