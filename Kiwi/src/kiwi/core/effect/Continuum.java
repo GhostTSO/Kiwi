@@ -4,6 +4,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.CompositeContext;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
@@ -35,10 +37,11 @@ public class Continuum extends Effect {
 
 	@Override
 	public void render(RenderContext context) {
-		Composite old_composite = context.g2D.getComposite();
 		
-		context.g2D.setColor(Color.BLACK);
-		context.g2D.fillRect(
+		Graphics2D g2D = (Graphics2D)context.g2D.create();
+		
+		g2D.setColor(Color.BLACK);
+		g2D.fillRect(
 				0,
 				0,
 				context.canvas_w,
@@ -46,16 +49,18 @@ public class Continuum extends Effect {
 				);
 		
 
-		context.g2D.setComposite(hz_composite);
+		g2D.setComposite(hz_composite);
+		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		int rad = Util.min(
 					context.canvas_w / 2,
 					context.canvas_h / 2
 					) * 3 / 5;
 		this.ramp = rad / 16f; 
-		context.g2D.setStroke(new BasicStroke(rad / 4f));
+		g2D.setStroke(new BasicStroke(rad / 4f));
 		
 		for(int i = 0; i < this.hz_band.length; i ++) {
-			context.g2D.setColor(hz_band[i].rgba);
+			g2D.setColor(hz_band[i].rgba);
 			float
 				amp = Util.map_tanh(
 						hz_band[i].amp,
@@ -67,7 +72,7 @@ public class Continuum extends Effect {
 				dx = amp * Util.cos(Util.toRadians(ang)),
 				dy = amp * Util.sin(Util.toRadians(ang));
 						
-			context.g2D.drawOval(
+			g2D.drawOval(
 					(int)(context.canvas_w / 2 + dx - rad),
 					(int)(context.canvas_h / 2 + dy - rad),
 					(int)(2 * rad),
@@ -75,7 +80,7 @@ public class Continuum extends Effect {
 					);
 		}
 		
-		context.g2D.setComposite(old_composite);
+		g2D.dispose();
 	}
 
 	@Override
@@ -121,9 +126,9 @@ public class Continuum extends Effect {
 				if(context.mono[i].re > amp) {
 					amp = context.mono[i].re;
 					if(Source.indexToHz(i) < frq)
-						frq -=ramp;
+						frq -= (max_hz - min_hz) / 16f;
 					if(Source.indexToHz(i) > frq)
-						frq +=ramp;
+						frq += (max_hz - min_hz) / 16f;
 				} else if(amp > ramp)
 					amp -= ramp;
 				else
@@ -146,7 +151,7 @@ public class Continuum extends Effect {
 							src.getWidth(), 
 							dst.getWidth()
 							),
-					h = Util.max(
+					h = Util.min(
 							src.getHeight(),
 							dst.getHeight()
 							);
