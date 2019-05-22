@@ -60,7 +60,7 @@ public class InvertedCircularity extends Effect{
 			r_root = Math.pow(context.stereo_r[i+1].re, 1/2.75);
 			context.g2D.setColor(myColor);	
 			
-			if(heightMultiplier*(l_root-l_normal) > peaksLeft[i]) {
+			if(heightMultiplier*(l_root-l_normal) > peaksLeft[i] && heightMultiplier*(l_root-l_normal) > 25) {
 				peaksLeft[i] = (heightMultiplier*(l_root-l_normal));
 			}
 			else if(peaksLeft[i] > 4){
@@ -69,7 +69,7 @@ public class InvertedCircularity extends Effect{
 				peaksLeft[i] = 0;
 			}
 			
-			if(heightMultiplier*(r_root-r_normal) > peaksRight[i]) {
+			if(heightMultiplier*(r_root-r_normal) > peaksRight[i] && heightMultiplier*(r_root-r_normal) > 25) {
 				peaksRight[i] = (heightMultiplier*(r_root-r_normal));
 			}
 			else if(peaksRight[i] > 4){
