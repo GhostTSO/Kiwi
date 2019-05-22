@@ -18,7 +18,7 @@ import kiwi.util.Util;
 
 public class Continuum extends Effect {
 	private static final float
-		AMPLITUDE_RAMP = 64f,
+		AMPLITUDE_RAMP = 96f,
 		AMPLITUDE_VELOCITY_UP =  1f,
 		AMPLITUDE_VELOCITY_DN = .2f,
 		FREQUENCY_VELOCITY = .2f;
