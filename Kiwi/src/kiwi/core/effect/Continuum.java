@@ -17,22 +17,25 @@ import kiwi.core.update.Updateable;
 import kiwi.util.Util;
 
 public class Continuum extends Effect {
+	private static final float
+		AMPLITUDE_RAMP = 64f,
+		AMPLITUDE_VELOCITY_UP =  1f,
+		AMPLITUDE_VELOCITY_DN = .2f,
+		FREQUENCY_VELOCITY = .2f;
+	
 	private final hz_band[]
-		hz_band;
-	private float
-		ramp;
+		hz_band = new hz_band[] {
+			new hz_band(new Color( 255,   0,   0),    0,    60), //
+			new hz_band(new Color(   0,   0, 255),   60,   250), // lo
+			new hz_band(new Color(   0, 255,   0),  250,   500), // lo-mid
+			new hz_band(new Color( 255,   0,   0),  500,  2000), //    mid
+			new hz_band(new Color(   0, 255,   0), 2000,  4000), // hi-mid
+			new hz_band(new Color(   0,   0, 255), 4000,  6000), // hi
+			new hz_band(new Color(   0, 255,   0), 6000, 20000)  //
+		};
 	
 	public Continuum() {
-		super("Continuum");		
-		hz_band = new hz_band[] {
-			new hz_band(255,   0,   0,    0,    60), //
-			new hz_band(  0,   0, 255,   60,   250), // lo
-			new hz_band(  0, 255,   0,  250,   500), // lo-mid
-			new hz_band(255,   0,   0,  500,  2000), //    mid
-			new hz_band(  0, 255,   0, 2000,  4000), // hi-mid
-			new hz_band(  0,   0, 255, 4000,  6000), // hi
-			new hz_band(  0, 255, 128, 6000, 20000)  //
-		};
+		super("Continuum");
 	}
 
 	@Override
@@ -40,6 +43,10 @@ public class Continuum extends Effect {
 		
 		Graphics2D g2D = (Graphics2D)context.g2D.create();
 		
+		g2D.setRenderingHint(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON
+				);		
 		g2D.setColor(Color.BLACK);
 		g2D.fillRect(
 				0,
@@ -47,37 +54,36 @@ public class Continuum extends Effect {
 				context.canvas_w,
 				context.canvas_h
 				);
+		g2D.setComposite(RGBA_COMPOSITE);
 		
-
-		g2D.setComposite(hz_composite);
-		g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		int rad = Util.min(
+		int
+			radius1 = Util.min(
 					context.canvas_w / 2,
 					context.canvas_h / 2
-					) * 3 / 5;
-		this.ramp = rad / 16f; 
-		g2D.setStroke(new BasicStroke(rad / 4f));
+					),
+			radius2 = radius1 * 3 / 5,
+			radius3 = radius2 * 1 / 4,
+			i = 0;
 		
-		for(int i = 0; i < this.hz_band.length; i ++) {
-			g2D.setColor(hz_band[i].rgba);
+		g2D.setStroke(new BasicStroke(radius3));
+		
+		for(hz_band hz_band: hz_band) {
+			g2D.setColor(hz_band.rgba);
+			
 			float
-				amp = Util.map_tanh(
-						hz_band[i].amp,
-						0, Short.MAX_VALUE,
-						0, 3 * rad / 5,
-						64f
-						),
-				ang = 360f / hz_band.length * i - (360f / hz_band.length / 2) + (360f / hz_band.length * hz_band[i].frq / (hz_band[i].max_hz - hz_band[i].min_hz)),
+				amp = hz_band.cur_amp * radius2,
+				rot = 360f / this.hz_band.length,
+				ang = (rot * i) - (rot / 2) + (rot * hz_band.cur_frq),
 				dx = amp * Util.cos(Util.toRadians(ang)),
 				dy = amp * Util.sin(Util.toRadians(ang));
-						
 			g2D.drawOval(
-					(int)(context.canvas_w / 2 + dx - rad),
-					(int)(context.canvas_h / 2 + dy - rad),
-					(int)(2 * rad),
-					(int)(2 * rad)		
+					(int)(context.canvas_w / 2 + dx - radius2),
+					(int)(context.canvas_h / 2 + dy - radius2),
+					(int)(2 * radius2),
+					(int)(2 * radius2)		
 					);
+			i ++;				
 		}
 		
 		g2D.dispose();
@@ -85,60 +91,58 @@ public class Continuum extends Effect {
 
 	@Override
 	public void update(UpdateContext context) {
-		for(int i = 0; i < hz_band.length; i ++)
-			hz_band[i].update(context);
+		for(hz_band hz_band: hz_band)
+			hz_band.update(context);
 	}
 	
-	private class hz_band implements Updateable {
-		protected Color
+	private static class hz_band implements Updateable {
+		protected final Color
 			rgba;
-		protected float
+		protected final float
 			min_hz,
 			max_hz;
 		
-		public hz_band(
-				int r,
-				int g,
-				int b,
-				float min_hz,
-				float max_hz
-				) {
-			this.rgba = new Color(
-					r,
-					g,
-					b
-					);
+		protected float
+			max_amp,
+			max_frq,
+			cur_amp,
+			cur_frq;
+		
+		public hz_band(Color rgba, float min_hz, float max_hz) {
+			this.rgba = rgba;
 			this.min_hz = min_hz;
 			this.max_hz = max_hz;
-			this.frq = (max_hz + min_hz) / 2;
-		}
-
-		protected float
-			amp,
-			frq;
+			this.max_frq = .5f;
+			this.cur_frq = .5f; 
+		}		
 
 		@Override
 		public void update(UpdateContext context) {
-			int
+			int 
 				a = Source.hzToIndex(this.min_hz),
-				b = Source.hzToIndex(this.max_hz);
-			for(int i = a; i < b; i ++) {
-				if(context.mono[i].re > amp) {
-					amp = context.mono[i].re;
-					if(Source.indexToHz(i) < frq)
-						frq -= (max_hz - min_hz) / 16f;
-					if(Source.indexToHz(i) > frq)
-						frq += (max_hz - min_hz) / 16f;
-				} else if(amp > ramp)
-					amp -= ramp;
-				else
-					amp = 0f;
-			}			
-		}
+				b = Source.hzToIndex(this.max_hz);			
+			this.max_amp = 0;
+			for(int i = a; i < b; i ++)
+				if(context.mono[i].re > this.max_amp) {
+					this.max_amp = context.mono[i].re;
+					this.max_frq = Source.indexToHz(i);
+					
+					this.max_amp = Util.map_loge(this.max_amp, 0, Short.MAX_VALUE, AMPLITUDE_RAMP);
+					this.max_frq = Util.map(this.max_frq, this.min_hz, this.max_hz);
+				}
+			
+			if(this.cur_amp < this.max_amp)
+				this.cur_amp += (this.max_amp - this.cur_amp) * AMPLITUDE_VELOCITY_UP;
+			if(this.cur_amp > this.max_amp)
+				this.cur_amp += (this.max_amp - this.cur_amp) * AMPLITUDE_VELOCITY_DN;
+			
+			if(this.cur_frq != this.max_frq)
+				this.cur_frq += (this.max_frq - this.cur_frq) * FREQUENCY_VELOCITY;
+		}		
 	}
 	
 	private static final CompositeContext
-		hz_composite_context = new CompositeContext() {
+		RGBA_COMPOSITE_CONTEXT = new CompositeContext() {
 			@Override
 			public void dispose() {
 				//do nothing
@@ -187,8 +191,8 @@ public class Continuum extends Effect {
 		};
 	
 	private static final Composite
-		hz_composite = (a, b, c) -> {
-			return hz_composite_context;
+		RGBA_COMPOSITE = (a, b, c) -> {
+			return RGBA_COMPOSITE_CONTEXT;
 		};
 		
 }
