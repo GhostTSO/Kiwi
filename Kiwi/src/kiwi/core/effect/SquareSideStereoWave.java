@@ -35,12 +35,11 @@ public class SquareSideStereoWave extends Effect{
 		
 		double heightMultiplier = (double)context.canvas_h/20;
 		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
-		Color myColor;;
-		int colorCounter = 0;
+		Color myColor;
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
-			myColor= new Color(colorCounter,255, 0);
+			myColor= new Color(i,255, 0);
 			l_root = Math.pow(context.stereo_l[i+3*Source.SAMPLES/4].re, 1/2.75);
-			r_root = Math.pow(context.stereo_r[i].re, 1/2.75);
+			r_root = Math.pow(context.stereo_r[i+1].re, 1/2.75);
 			context.g2D.setColor(myColor);	
 			
 			if(heightMultiplier*(l_root-l_normal) > peaksLeft[i]) {
@@ -69,7 +68,7 @@ public class SquareSideStereoWave extends Effect{
 					4,
 					4
 					);
-			myColor= new Color(255-colorCounter,0, 255);
+			myColor= new Color(255-i,0, 255);
 			context.g2D.setColor(myColor);	
 			context.g2D.drawRect(
 					(int)(canvasSpacing*i)+context.canvas_w/2,
@@ -84,7 +83,6 @@ public class SquareSideStereoWave extends Effect{
 					4
 					);	
 			
-			colorCounter++;
 		}
 	}
 
