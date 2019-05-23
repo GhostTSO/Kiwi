@@ -18,7 +18,7 @@ import kiwi.util.Util;
 
 public class Continuum extends Effect {
 	private static final float
-		AMPLITUDE_RAMP = 96f,
+		AMPLITUDE_RAMP = 128f,
 		AMPLITUDE_VELOCITY_UP =  1f,
 		AMPLITUDE_VELOCITY_DN = .2f,
 		FREQUENCY_VELOCITY = .2f;
@@ -72,7 +72,7 @@ public class Continuum extends Effect {
 			g2D.setColor(hz_band.rgba);
 			
 			float
-				amp = hz_band.cur_amp * radius2,
+				amp = hz_band.cur_amp * radius3 * 1.2f,
 				rot = 360f / this.hz_band.length,
 				ang = (rot * i) - (rot / 2) + (rot * hz_band.cur_frq),
 				dx = amp * Util.cos(Util.toRadians(ang)),
@@ -158,8 +158,7 @@ public class Continuum extends Effect {
 					h = Util.min(
 							src.getHeight(),
 							dst.getHeight()
-							);
-				
+							);				
 				int[]
 						srcPixel = new int[4],
 						dstPixel = new int[4],
@@ -191,7 +190,7 @@ public class Continuum extends Effect {
 		};
 	
 	private static final Composite
-		RGBA_COMPOSITE = (a, b, c) -> {
+		RGBA_COMPOSITE = (model1, model2, hints) -> {
 			return RGBA_COMPOSITE_CONTEXT;
 		};
 		
