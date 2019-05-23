@@ -18,10 +18,13 @@ import kiwi.util.Util;
 
 public class Continuum extends Effect {
 	private static final float
-		AMPLITUDE_RAMP = 128f,
+		AMPLITUDE_RAMP = 64f,
 		AMPLITUDE_VELOCITY_UP =  1f,
-		AMPLITUDE_VELOCITY_DN = .2f,
-		FREQUENCY_VELOCITY = .2f;
+		AMPLITUDE_VELOCITY_DN = .3f,
+		FREQUENCY_VELOCITY = .2f,
+		BRIGHTNESS_FLOOR = .4f,
+		BRIGHTNESS_VELOCITY_UP =  1f,
+		BRIGHTNESS_VELOCITY_DN = .15f;
 	
 	private final hz_band[]
 		hz_band = new hz_band[] {
@@ -33,6 +36,9 @@ public class Continuum extends Effect {
 			new hz_band(new Color(   0,   0, 255), 4000,  6000), // hi
 			new hz_band(new Color(   0, 255,   0), 6000, 20000)  //
 		};
+	private float
+		max_brightness,
+		cur_brightness;
 	
 	public Continuum() {
 		super("Continuum");
@@ -68,11 +74,18 @@ public class Continuum extends Effect {
 		
 		g2D.setStroke(new BasicStroke(radius3));
 		
+		
 		for(hz_band hz_band: hz_band) {
-			g2D.setColor(hz_band.rgba);
+			g2D.setColor(
+					new Color(
+						(int)(hz_band.rgba.getRed()   * this.cur_brightness * (1f - BRIGHTNESS_FLOOR) + hz_band.rgba.getRed()   * BRIGHTNESS_FLOOR),
+						(int)(hz_band.rgba.getGreen() * this.cur_brightness * (1f - BRIGHTNESS_FLOOR) + hz_band.rgba.getGreen() * BRIGHTNESS_FLOOR),
+						(int)(hz_band.rgba.getBlue()  * this.cur_brightness * (1f - BRIGHTNESS_FLOOR) + hz_band.rgba.getBlue()  * BRIGHTNESS_FLOOR)
+					));
+			
 			
 			float
-				amp = hz_band.cur_amp * radius3 * 1.2f,
+				amp = hz_band.cur_amp * radius3 * 1.3f,
 				rot = 360f / this.hz_band.length,
 				ang = (rot * i) - (rot / 2) + (rot * hz_band.cur_frq),
 				dx = amp * Util.cos(Util.toRadians(ang)),
@@ -91,8 +104,24 @@ public class Continuum extends Effect {
 
 	@Override
 	public void update(UpdateContext context) {
-		for(hz_band hz_band: hz_band)
+		this.max_brightness = 0f;
+		for(hz_band hz_band: hz_band) {
 			hz_band.update(context);
+			if(hz_band.cur_amp> this.max_brightness)
+				this.max_brightness = hz_band.cur_amp;
+		}
+		
+		this.max_brightness = (float)Math.sqrt(this.max_brightness);
+		
+		if(this.cur_brightness < this.max_brightness)
+			this.cur_brightness += (this.max_brightness - this.cur_brightness) * BRIGHTNESS_VELOCITY_UP;
+		if(this.cur_brightness > this.max_brightness)
+			this.cur_brightness += (this.max_brightness - this.cur_brightness) * BRIGHTNESS_VELOCITY_DN;
+
+		if(this.cur_brightness < 0f)
+			this.cur_brightness = 0f;
+		if(this.cur_brightness > 1f)
+			this.cur_brightness = 1f;
 	}
 	
 	private static class hz_band implements Updateable {
