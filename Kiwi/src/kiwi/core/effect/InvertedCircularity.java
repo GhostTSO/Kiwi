@@ -38,15 +38,9 @@ public class InvertedCircularity extends Effect{
 				context.canvas_h
 				);			
 		
-		double l_root;
-		double r_root;
-		double l_normal = Math.pow(context.stereo_l[Source.SAMPLES/2].re, 1/2.75);
-		double r_normal = Math.pow(context.stereo_r[Source.SAMPLES/2].re, 1/2.75);
-		
 		double root;
 		double logNum = Math.log(50);
 		double scale = context.canvas_h/3;
-		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 		int circleWidth = context.canvas_h/35;
 		
 		float degree;
@@ -89,12 +83,7 @@ public class InvertedCircularity extends Effect{
 				peaksRight[i] = 0;
 			}
 			
-			degree = (float)(i*Math.PI/256.0);
-			
-				
-			
-			cosValue = context.canvas_w/8*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree);
-			sinValue = context.canvas_w/8*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree);
+
 			
 			degree = (float)((this.degree+i*Math.PI)/256.0);
 			

@@ -33,7 +33,6 @@ public class Circularity extends Effect{
 		double root;
 		double logNum = Math.log(50);
 		double scale = context.canvas_h/4;
-		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 		Color myColor;
 		
 		int circleWidth = context.canvas_h/50;

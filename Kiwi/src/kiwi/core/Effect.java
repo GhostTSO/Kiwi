@@ -6,6 +6,7 @@ import kiwi.core.effect.Circularity;
 import kiwi.core.effect.Continuum;
 import kiwi.core.effect.InvertedCircularity;
 import kiwi.core.effect.SideStereoWaveForm;
+import kiwi.core.effect.Singularity;
 import kiwi.core.effect.SquareSideStereoWave;
 import kiwi.core.effect.StereoWaveform;
 import kiwi.core.render.Renderable;
@@ -27,6 +28,7 @@ public abstract class Effect implements Renderable, Updateable {
 		list.add(new Continuum());
 		list.add(new Circularity());
 		list.add(new InvertedCircularity());
+		list.add(new Singularity());
 		return list;
 	}
 }
