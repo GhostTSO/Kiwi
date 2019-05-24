@@ -43,9 +43,10 @@ public class InvertedCircularity extends Effect{
 		double l_normal = Math.pow(context.stereo_l[Source.SAMPLES/2].re, 1/2.75);
 		double r_normal = Math.pow(context.stereo_r[Source.SAMPLES/2].re, 1/2.75);
 		
-		double heightMultiplier = (double)context.canvas_h/12.5;
-		
-		
+		double root;
+		double logNum = Math.log(50);
+		double scale = context.canvas_h/3;
+		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 		int circleWidth = context.canvas_h/35;
 		
 		float degree;
@@ -56,27 +57,44 @@ public class InvertedCircularity extends Effect{
 		
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
 			myColor= new Color(startingColor1, startingColor2, startingColor3);
-			l_root = Math.pow(context.stereo_l[i+3*Source.SAMPLES/4].re, 1/2.75);
-			r_root = Math.pow(context.stereo_r[i+1].re, 1/2.75);
 			context.g2D.setColor(myColor);	
 			
-			if(heightMultiplier*(l_root-l_normal) > peaksLeft[i] && heightMultiplier*(l_root-l_normal) > 30) {
-				peaksLeft[i] = (heightMultiplier*(l_root-l_normal));
-			}
-			else if(peaksLeft[i] > 4){
-				peaksLeft[i]-=2;
-			}else if(peaksLeft[i] <= 4) {
+			if(context.stereo_l[i+3*Source.SAMPLES/4].re > 1) {
+				root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re))/logNum;
+				if(root > peaksLeft[i]) {
+					peaksLeft[i] = root;
+				}else if(peaksLeft[i] > 4){
+					peaksLeft[i] -= 4;
+				}else {
+					peaksLeft[i] = 0;
+				}
+			}else if(peaksLeft[i] > 4){
+				peaksLeft[i] -= 4;
+			}else {
 				peaksLeft[i] = 0;
 			}
 			
-			if(heightMultiplier*(r_root-r_normal) > peaksRight[i] && heightMultiplier*(r_root-r_normal) > 30) {
-				peaksRight[i] = (heightMultiplier*(r_root-r_normal));
-			}
-			else if(peaksRight[i] > 4){
-				peaksRight[i]-=2;
-			}else if(peaksRight[i] <= 4) {
+			if(context.stereo_l[i+1].re > 1) {
+				root = scale*(Math.log(context.stereo_l[i+1].re))/logNum;
+				if(root > peaksRight[i]) {
+					peaksRight[i] = root;
+				}else if(peaksRight[i] > 4){
+					peaksRight[i] -= 4;
+				}else {
+					peaksRight[i] = 0;
+				}
+			}else if(peaksRight[i] > 4){
+				peaksRight[i] -= 4;
+			}else {
 				peaksRight[i] = 0;
 			}
+			
+			degree = (float)(i*Math.PI/256.0);
+			
+				
+			
+			cosValue = context.canvas_w/8*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree);
+			sinValue = context.canvas_w/8*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree);
 			
 			degree = (float)((this.degree+i*Math.PI)/256.0);
 			

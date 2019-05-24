@@ -30,12 +30,10 @@ public class Circularity extends Effect{
 				context.canvas_h
 				);			
 		
-		double l_root;
-		double r_root;
-		double l_normal = Math.pow(context.stereo_l[Source.SAMPLES/2].re, 1/2.75);
-		double r_normal = Math.pow(context.stereo_r[Source.SAMPLES/2].re, 1/2.75);
-		
-		double heightMultiplier = (double)context.canvas_h/25;
+		double root;
+		double logNum = Math.log(50);
+		double scale = context.canvas_h/4;
+		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 		Color myColor;
 		
 		int circleWidth = context.canvas_h/50;
@@ -46,22 +44,36 @@ public class Circularity extends Effect{
 		
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
 			myColor= new Color(i,0, 255);
-			l_root = Math.pow(context.stereo_l[i+3*Source.SAMPLES/4].re, 1/2.75);
-			r_root = Math.pow(context.stereo_r[i+1].re, 1/2.75);
 			context.g2D.setColor(myColor);	
 			
-			if(heightMultiplier*(l_root-l_normal) > peaksLeft[i]) {
-				peaksLeft[i] = (heightMultiplier*(l_root-l_normal));
-			}
-			else if(peaksLeft[i] > 0){
-				peaksLeft[i]-=5;
+			if(context.stereo_l[i+3*Source.SAMPLES/4].re > 1) {
+				root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re))/logNum;
+				if(root > peaksLeft[i]) {
+					peaksLeft[i] = root;
+				}else if(peaksLeft[i] > 4){
+					peaksLeft[i] -= 4;
+				}else {
+					peaksLeft[i] = 0;
+				}
+			}else if(peaksLeft[i] > 4){
+				peaksLeft[i] -= 4;
+			}else {
+				peaksLeft[i] = 0;
 			}
 			
-			if(heightMultiplier*(r_root-r_normal) > peaksRight[i]) {
-				peaksRight[i] = (heightMultiplier*(r_root-r_normal));
-			}
-			else if(peaksRight[i] > 0){
-				peaksRight[i]-=5;
+			if(context.stereo_l[i+1].re > 1) {
+				root = scale*(Math.log(context.stereo_l[i+1].re))/logNum;
+				if(root > peaksRight[i]) {
+					peaksRight[i] = root;
+				}else if(peaksRight[i] > 4){
+					peaksRight[i] -= 4;
+				}else {
+					peaksRight[i] = 0;
+				}
+			}else if(peaksRight[i] > 4){
+				peaksRight[i] -= 4;
+			}else {
+				peaksRight[i] = 0;
 			}
 			
 			degree = (float)(i*Math.PI/256.0);
