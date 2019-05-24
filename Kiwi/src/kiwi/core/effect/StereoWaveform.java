@@ -26,38 +26,39 @@ public class StereoWaveform extends Effect {
 					);			
 			
 			double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
-			
-			double l_root;
-			double r_root;
+			double root;
 			double logNum = Math.log(50);
 			double scale = context.canvas_h/8;
 				
+			
 			for(int i = 0; i < Source.SAMPLES/2; i ++) {
 				
 				if(context.stereo_l[i+Source.SAMPLES/2].re > 1) {
-				l_root = Math.log(context.stereo_l[i+Source.SAMPLES/2].re)/logNum;
+				root = Math.log(context.stereo_l[i+Source.SAMPLES/2].re)/logNum;
 				}else {
-					l_root = 0;
+					root = 0;
 				}
-				if(context.stereo_r[i+Source.SAMPLES/2].re > 1) {
-					r_root = Math.log(context.stereo_r[i+Source.SAMPLES/2].re)/logNum;
-					}else {
-						r_root = 0;
-					}
+				
 				context.g2D.setColor(Color.WHITE);	
 				context.g2D.drawLine(
 						(int) (canvasSpacing*i),
-						(int)(context.canvas_h/4+scale*(l_root)),
+						(int)(context.canvas_h/4+scale*(root)),
 						(int) (canvasSpacing*i),
-						(int)(context.canvas_h/4-scale*(l_root))
-						);		
+						(int)(context.canvas_h/4-scale*(root))
+						);	
 				
-				context.g2D.setColor(Color.WHITE);
+				if(context.stereo_r[i+Source.SAMPLES/2].re > 1) {
+					root = Math.log(context.stereo_r[i+Source.SAMPLES/2].re)/logNum;
+					}else {
+						root = 0;
+					}
+					
+				
 				context.g2D.drawLine(
 						(int) (canvasSpacing*i),
-						(int)(3*context.canvas_h/4+scale*(r_root)),
+						(int)(3*context.canvas_h/4+scale*(root)),
 						(int) (canvasSpacing*i),
-						(int)(3*context.canvas_h/4-scale*(r_root))
+						(int)(3*context.canvas_h/4-scale*(root))
 						);	
 				
 			}

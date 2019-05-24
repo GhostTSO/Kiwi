@@ -26,33 +26,35 @@ public class SideStereoWaveForm extends Effect{
 				context.canvas_h
 				);			
 		
-		double l_root;
-		double r_root;
-		double l_normal = Math.pow(context.stereo_l[Source.SAMPLES/2].re, 1/2.75);
-		double r_normal = Math.pow(context.stereo_r[Source.SAMPLES/2].re, 1/2.75);
-		
-		
-		double heightMultiplier = (double)context.canvas_h/20;
 		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
+		double root;
+		double logNum = Math.log(50);
+		double scale = context.canvas_h/3;
 		
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
-			
-			l_root = Math.pow(context.stereo_l[i+3*Source.SAMPLES/4].re, 1/2.75);
-			r_root = Math.pow(context.stereo_r[i+1].re, 1/2.75);
+			if(context.stereo_l[i+3*Source.SAMPLES/4].re > 1) {
+			root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re)/logNum);
+			}else {
+				root = 0;
+			}
 			context.g2D.setColor(Color.MAGENTA);	
 			context.g2D.drawLine(
 					(int)(canvasSpacing*i),
-					(int)(context.canvas_h/2+heightMultiplier*(l_root-l_normal)),
+					(int)(context.canvas_h/2+root),
 					(int)(canvasSpacing*i),
-					(int)(context.canvas_h/2-heightMultiplier*(l_root-l_normal))
+					(int)(context.canvas_h/2-root)
 					);		
-			
+			if(context.stereo_r[i+1].re > 1) {
+			root = scale*(Math.log(context.stereo_r[i+1].re)/logNum);
+			}else {
+				root = 0;
+			}
 			context.g2D.setColor(Color.CYAN);
 			context.g2D.drawLine(
 					(int)(canvasSpacing*i)+context.canvas_w/2,
-					(int)(context.canvas_h/2+heightMultiplier*(r_root-r_normal)),
+					(int)(context.canvas_h/2+root),
 					(int)(canvasSpacing*i)+context.canvas_w/2,
-					(int)(context.canvas_h/2-heightMultiplier*(r_root-r_normal))
+					(int)(context.canvas_h/2-root)
 					);	
 			
 		}

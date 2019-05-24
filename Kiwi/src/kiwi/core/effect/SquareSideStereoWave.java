@@ -27,8 +27,7 @@ public class SquareSideStereoWave extends Effect{
 				context.canvas_h
 				);			
 		
-		double l_root;
-		double r_root;
+		double root;
 		double logNum = Math.log(50);
 		double scale = context.canvas_h/3;
 		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
@@ -40,9 +39,9 @@ public class SquareSideStereoWave extends Effect{
 			context.g2D.setColor(myColor);	
 			
 			if(context.stereo_l[i+3*Source.SAMPLES/4].re > 1) {
-				l_root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re))/logNum;
-				if(l_root > peaksLeft[i]) {
-					peaksLeft[i] = l_root;
+				root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re))/logNum;
+				if(root > peaksLeft[i]) {
+					peaksLeft[i] = root;
 				}else if(peaksLeft[i] > 4){
 					peaksLeft[i] -= 4;
 				}else {
@@ -55,9 +54,9 @@ public class SquareSideStereoWave extends Effect{
 			}
 			
 			if(context.stereo_l[i+1].re > 1) {
-				l_root = scale*(Math.log(context.stereo_l[i+1].re))/logNum;
-				if(l_root > peaksRight[i]) {
-					peaksRight[i] = l_root;
+				root = scale*(Math.log(context.stereo_l[i+1].re))/logNum;
+				if(root > peaksRight[i]) {
+					peaksRight[i] = root;
 				}else if(peaksRight[i] > 4){
 					peaksRight[i] -= 4;
 				}else {
