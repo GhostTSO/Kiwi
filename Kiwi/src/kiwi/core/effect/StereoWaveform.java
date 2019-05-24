@@ -29,32 +29,35 @@ public class StereoWaveform extends Effect {
 			
 			double l_root;
 			double r_root;
-			double l_normal = Math.log(context.stereo_l[Source.SAMPLES/2].re)/ Math.log(20);
-			double r_normal = Math.pow(context.stereo_r[Source.SAMPLES/2].re, 1/2.75);
+			double logNum = Math.log(50);
+			double scale = context.canvas_h/8;
 				
 			for(int i = 0; i < Source.SAMPLES/2; i ++) {
 				
-				if(context.stereo_l[i+Source.SAMPLES/2].re > 1 || context.stereo_l[i+Source.SAMPLES/2].re < -1 ) {
-				l_root = Math.log(context.stereo_l[i+Source.SAMPLES/2].re)/Math.log(20);
+				if(context.stereo_l[i+Source.SAMPLES/2].re > 1) {
+				l_root = Math.log(context.stereo_l[i+Source.SAMPLES/2].re)/logNum;
 				}else {
 					l_root = 0;
 				}
-				r_root = Math.pow(context.stereo_r[i+Source.SAMPLES/2].re, 1/2.75);
-
+				if(context.stereo_r[i+Source.SAMPLES/2].re > 1) {
+					r_root = Math.log(context.stereo_r[i+Source.SAMPLES/2].re)/logNum;
+					}else {
+						r_root = 0;
+					}
 				context.g2D.setColor(Color.WHITE);	
 				context.g2D.drawLine(
 						(int) (canvasSpacing*i),
-						(int)(context.canvas_h/4+50*(l_root)),
+						(int)(context.canvas_h/4+scale*(l_root)),
 						(int) (canvasSpacing*i),
-						(int)(context.canvas_h/4-50*(l_root))
+						(int)(context.canvas_h/4-scale*(l_root))
 						);		
 				
 				context.g2D.setColor(Color.WHITE);
 				context.g2D.drawLine(
 						(int) (canvasSpacing*i),
-						(int)(3*context.canvas_h/4+25*(r_root-r_normal)),
+						(int)(3*context.canvas_h/4+scale*(r_root)),
 						(int) (canvasSpacing*i),
-						(int)(3*context.canvas_h/4-25*(r_root-r_normal))
+						(int)(3*context.canvas_h/4-scale*(r_root))
 						);	
 				
 			}
