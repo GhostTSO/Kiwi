@@ -60,8 +60,22 @@ public class Circularity extends Effect{
 				peaksLeft[i] = 0;
 			}
 			
-			if(context.stereo_l[i+1].re > 1) {
-				root = scale*(Math.log(context.stereo_l[i+1].re))/logNum;
+			degree = (float)(i*Math.PI/256.0);
+			
+				
+			
+			cosValue = context.canvas_w/8*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree);
+			sinValue = context.canvas_w/8*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree);
+			
+			context.g2D.fillOval(
+					(int)(context.canvas_w/2+cosValue),
+					(int)(context.canvas_h/2+sinValue),
+					circleWidth,
+					circleWidth
+					);
+			
+			if(context.stereo_r[i+1].re > 1) {
+				root = scale*(Math.log(context.stereo_r[i+1].re))/logNum;
 				if(root > peaksRight[i]) {
 					peaksRight[i] = root;
 				}else if(peaksRight[i] > 4){
@@ -75,19 +89,7 @@ public class Circularity extends Effect{
 				peaksRight[i] = 0;
 			}
 			
-			degree = (float)(i*Math.PI/256.0);
-			
 				
-			
-			cosValue = context.canvas_w/8*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree);
-			sinValue = context.canvas_w/8*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree);
-			
-			context.g2D.fillOval(
-					(int)(context.canvas_w/2+cosValue),
-					(int)(context.canvas_h/2+sinValue),
-					circleWidth,
-					circleWidth
-					);	
 			
 			myColor= new Color(255-i,0, 255);
 			context.g2D.setColor(myColor);
