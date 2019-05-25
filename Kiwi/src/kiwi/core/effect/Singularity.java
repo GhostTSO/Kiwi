@@ -90,8 +90,8 @@ public class Singularity extends Effect{
 			
 				
 			
-			cosValue = - peaksLeft[i]*Math.cos(degree);
-			sinValue = - peaksLeft[i]*Math.sin(degree);
+			cosValue = -(peaksLeft[i]*Math.cos(degree));
+			sinValue = -(peaksLeft[i]*Math.sin(degree));
 			
 			context.g2D.fillOval(
 					(int)(context.canvas_w/2+cosValue),
@@ -102,8 +102,8 @@ public class Singularity extends Effect{
 			
 			
 			
-			cosValue = + peaksRight[i]*Math.cos(degree);
-			sinValue = + peaksRight[i]*Math.sin(degree);
+			cosValue = peaksRight[i]*Math.cos(degree);
+			sinValue = peaksRight[i]*Math.sin(degree);
 			
 			context.g2D.fillOval(
 					(int)(context.canvas_w/2+cosValue),
