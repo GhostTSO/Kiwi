@@ -47,7 +47,7 @@ public class Engine implements Runnable {
 	
 	protected Config
 		config = new Config(
-				DEBUG, (this.debug = false),
+				DEBUG, (this.debug = true),
 				FULLSCREEN, (this.fullscreen = false),
 				THREAD_FPS, (this.thread_fps = 60),
 				THREAD_TPS, (this.thread_tps = 60),

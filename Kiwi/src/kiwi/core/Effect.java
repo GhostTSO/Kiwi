@@ -5,6 +5,7 @@ import java.util.List;
 import kiwi.core.effect.Circularity;
 import kiwi.core.effect.Continuum;
 import kiwi.core.effect.InvertedCircularity;
+import kiwi.core.effect.Shift;
 import kiwi.core.effect.SideStereoWaveForm;
 import kiwi.core.effect.Singularity;
 import kiwi.core.effect.SpaceStation;
@@ -31,6 +32,7 @@ public abstract class Effect implements Renderable, Updateable {
 		list.add(new InvertedCircularity());
 		list.add(new Singularity());
 		list.add(new SpaceStation());
+		list.add(new Shift());
 		return list;
 	}
 }
