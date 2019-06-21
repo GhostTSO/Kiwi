@@ -13,7 +13,7 @@ public class Objects3D {
 		float[] result = new float[point.length];
 		for(int i = 0; i < field.length; i ++) {
 			for(int j = 0; j < field.length; j++) {
-				result[i] += (point[j] * field[j][i]);
+				result[i] += (float)(point[j] * field[j][i]);
 			}
 		}
 		

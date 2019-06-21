@@ -14,33 +14,32 @@ import kiwi.math.Objects3D;
 public class Shift extends Effect{
 
 	public float[][] prism = new float[8][3];
-	public float[][] shiftPrism = new float[8][3];
-	public float xRotation = 0;
-	public float yRotation = 0;
-	public float zRotation = 0;
+	public static float[][] shiftPrism = new float[8][3];
+	public static float[][] shiftedCollection = new float[128][3];
+ 	public float xRotation = 0.0f;
+	public float yRotation = 0.0f;
+	public float zRotation = 0.0f;
 	
-	public float xSpeed = .002f;
-	public float ySpeed = .001f;
-	public float zSpeed = .003f;
-	
-	public float[] yValueRight = new float[8];
-	public float[] yValueLeft = new float[8];
+	public float xSpeed = .001f;
+	public float ySpeed = .005f;
+	public float zSpeed = .0015f;
 	
 	
-	public float[][] xMatrix = { 	{1, 				0,					0					},
-            						{0, (float)Math.cos(xRotation), (float)-Math.sin(xRotation)	},
-            						{0, (float)Math.sin(xRotation), (float)Math.cos(xRotation)}	};
+	
+	public float[][] xMatrix = { 	{1.0f, 				0.0f,					0.0f					},
+            						{0.0f, (float)Math.cos(xRotation), (float)-Math.sin(xRotation)	},
+            						{0.0f, (float)Math.sin(xRotation), (float)Math.cos(xRotation)}	};
 
 	public float[][] yMatrix = { 	{(float)Math.cos(yRotation), 0, (float)-Math.sin(yRotation)	},
-            						{0,                      	 1,                       0		},
-            						{(float)Math.sin(yRotation), 0, (float)Math.cos(yRotation)}	};
+            						{0.0f,                      	 1.0f,                       0.0f		},
+            						{(float)Math.sin(yRotation), 0.0f, (float)Math.cos(yRotation)}	};
 
-	public float[][] zMatrix = { 	{(float)Math.cos(zRotation), (float)-Math.sin(zRotation), 0	},
-            						{(float)Math.sin(zRotation), (float)Math.cos(zRotation),  0	},
-            						{				0,                     0,                 1}};
+	public float[][] zMatrix = { 	{(float)Math.cos(zRotation), (float)-Math.sin(zRotation), 0.0f	},
+            						{(float)Math.sin(zRotation), (float)Math.cos(zRotation),  0.0f	},
+            						{				0.0f,                     0.0f,                 1.0f}};
 
-	public float[][] projection = 	{{1,0,0},
-									{0,1,0}};
+	public float[][] projection = 	{{1.0f,0.0f,0.0f},
+									{0.0f,1.0f,0.0f}};
 	
 	public Shift() {
 		super("Shift");
@@ -63,22 +62,22 @@ public class Shift extends Effect{
 		
 		float average = 0;
 		float scale = context.canvas_h/3;;
-		double logNum = Math.log(50);
+		float logNum = (float)Math.log(50);
 		float shift = context.canvas_w/40;
 		float width = context.canvas_w/20;
 		
 		
-		this.xMatrix = new float[][] 	{{1, 				0,					0					},
-		  	{0, (float)Math.cos(xRotation), (float)-Math.sin(xRotation)},
-		  	{0, (float)Math.sin(xRotation), (float)Math.cos(xRotation)}};
+		this.xMatrix = new float[][] 	{{1.0f, 				0.0f,					0.0f					},
+		  	{0.0f, (float)Math.cos(xRotation), (float)-Math.sin(xRotation)},
+		  	{0.0f, (float)Math.sin(xRotation), (float)Math.cos(xRotation)}};
 
-		this.yMatrix = 	new float[][] 	{ 	{(float)Math.cos(yRotation), 0, (float)-Math.sin(yRotation)	},
-			{0,                      	 1,                       0		},
-			{(float)Math.sin(yRotation), 0, (float)Math.cos(yRotation)}	};
+		this.yMatrix = 	new float[][] 	{ 	{(float)Math.cos(yRotation), 0.0f, (float)-Math.sin(yRotation)	},
+			{0.0f,                      	 1.0f,                       0.0f		},
+			{(float)Math.sin(yRotation), 0.0f, (float)Math.cos(yRotation)}	};
 			
-		this.zMatrix = new float[][] 	{{(float)Math.cos(zRotation), (float)-Math.sin(zRotation), 0	},
-			{(float)Math.sin(zRotation), (float)Math.cos(zRotation),  0	},
-			{				0,                     0,                 1}};
+		this.zMatrix = new float[][] 	{{(float)Math.cos(zRotation), (float)-Math.sin(zRotation), 0.0f	},
+			{(float)Math.sin(zRotation), (float)Math.cos(zRotation),  0.0f	},
+			{				0.0f,                     0.0f,                 1.0f}};
 		
 		
 			for(int i = 0; i < 8; i++) {
@@ -93,7 +92,6 @@ public class Shift extends Effect{
 					average = 20;
 				}
 			
-				yValueRight[i] = average;
 			
 			
 				float spacing = i*1.5f*-width;
@@ -117,70 +115,14 @@ public class Shift extends Effect{
 				shiftPrism[k] = Objects3D.matrixMultiply(prism[k], xMatrix);
 				shiftPrism[k] = Objects3D.matrixMultiply(shiftPrism[k], yMatrix);
 				shiftPrism[k] = Objects3D.matrixMultiply(shiftPrism[k], zMatrix);
+				shiftedCollection[(7-i)*8+k] = shiftPrism[k];
 				//System.out.format("Position %d: %f,%f,%f%n", i, shiftPrism[i][0],shiftPrism[i][1],shiftPrism[i][2]);
 			}
 			
-//			float[] result = Objects3D.matrixMultiply(new float[] {100,50,25}, new float[][] {{1,2,3},{4,5,6},{7,8,9}});
-//			
-//			String test =  String.format("%f,%f,%f", result[0], result[1], result[2]);
-//			
-//			context.g2D.drawString(test, 50, 50);
-			
-//			myColor = new Color(255,0,0);
-//			context.g2D.setColor(myColor);
-//			context.g2D.drawLine((int)shiftPrism[0][0]+context.canvas_w/2, (int)shiftPrism[0][1]+context.canvas_h/2, (int)shiftPrism[1][0]+context.canvas_w/2, (int)shiftPrism[1][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[1][0]+context.canvas_w/2, (int)shiftPrism[1][1]+context.canvas_h/2, (int)shiftPrism[2][0]+context.canvas_w/2, (int)shiftPrism[2][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[2][0]+context.canvas_w/2, (int)shiftPrism[2][1]+context.canvas_h/2, (int)shiftPrism[3][0]+context.canvas_w/2, (int)shiftPrism[3][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[3][0]+context.canvas_w/2, (int)shiftPrism[3][1]+context.canvas_h/2, (int)shiftPrism[0][0]+context.canvas_w/2, (int)shiftPrism[0][1]+context.canvas_h/2);
-//			
-//			myColor = new Color(0,255,0);
-//			context.g2D.setColor(myColor);
-//			context.g2D.drawLine((int)shiftPrism[4][0]+context.canvas_w/2, (int)shiftPrism[4][1]+context.canvas_h/2, (int)shiftPrism[5][0]+context.canvas_w/2, (int)shiftPrism[5][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[5][0]+context.canvas_w/2, (int)shiftPrism[5][1]+context.canvas_h/2, (int)shiftPrism[6][0]+context.canvas_w/2, (int)shiftPrism[6][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[6][0]+context.canvas_w/2, (int)shiftPrism[6][1]+context.canvas_h/2, (int)shiftPrism[7][0]+context.canvas_w/2, (int)shiftPrism[7][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[7][0]+context.canvas_w/2, (int)shiftPrism[7][1]+context.canvas_h/2, (int)shiftPrism[4][0]+context.canvas_w/2, (int)shiftPrism[4][1]+context.canvas_h/2);
-//			
-//			myColor = new Color(0,0,255);
-//			context.g2D.setColor(myColor);
-//			context.g2D.drawLine((int)shiftPrism[0][0]+context.canvas_w/2, (int)shiftPrism[0][1]+context.canvas_h/2, (int)shiftPrism[4][0]+context.canvas_w/2, (int)shiftPrism[4][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[1][0]+context.canvas_w/2, (int)shiftPrism[1][1]+context.canvas_h/2, (int)shiftPrism[5][0]+context.canvas_w/2, (int)shiftPrism[5][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[2][0]+context.canvas_w/2, (int)shiftPrism[2][1]+context.canvas_h/2, (int)shiftPrism[6][0]+context.canvas_w/2, (int)shiftPrism[6][1]+context.canvas_h/2);
-//			context.g2D.drawLine((int)shiftPrism[3][0]+context.canvas_w/2, (int)shiftPrism[3][1]+context.canvas_h/2, (int)shiftPrism[7][0]+context.canvas_w/2, (int)shiftPrism[7][1]+context.canvas_h/2);
 		
 			
-			myColor = new Color(200,200,0);
-			context.g2D.setColor(myColor);
-			int xCenter = context.canvas_w/2;
-			int yCenter = context.canvas_h/2;
-			
-			int[] bottomX = {(int)shiftPrism[0][0]+xCenter, (int)shiftPrism[1][0]+xCenter, (int)shiftPrism[2][0]+xCenter, (int)shiftPrism[3][0]+xCenter};
-			int[] bottomY = {(int)shiftPrism[0][1]+yCenter, (int)shiftPrism[1][1]+yCenter, (int)shiftPrism[2][1]+yCenter, (int)shiftPrism[3][1]+yCenter};
-			
-			int[] topX = {(int)shiftPrism[4][0]+xCenter, (int)shiftPrism[5][0]+xCenter, (int)shiftPrism[6][0]+xCenter, (int)shiftPrism[7][0]+xCenter};
-			int[] topY = {(int)shiftPrism[4][1]+yCenter, (int)shiftPrism[5][1]+yCenter, (int)shiftPrism[6][1]+yCenter, (int)shiftPrism[7][1]+yCenter};
-			
-			int[] frontX = {(int)shiftPrism[0][0]+xCenter, (int)shiftPrism[1][0]+xCenter, (int)shiftPrism[5][0]+xCenter, (int)shiftPrism[4][0]+xCenter};
-			int[] frontY = {(int)shiftPrism[0][1]+yCenter, (int)shiftPrism[1][1]+yCenter, (int)shiftPrism[5][1]+yCenter, (int)shiftPrism[4][1]+yCenter};
-			
-			int[] backX = {(int)shiftPrism[2][0]+xCenter, (int)shiftPrism[3][0]+xCenter, (int)shiftPrism[7][0]+xCenter, (int)shiftPrism[6][0]+xCenter};
-			int[] backY = {(int)shiftPrism[2][1]+yCenter, (int)shiftPrism[3][1]+yCenter, (int)shiftPrism[7][1]+yCenter, (int)shiftPrism[6][1]+yCenter};
-			
-			int[] leftX = {(int)shiftPrism[1][0]+xCenter, (int)shiftPrism[2][0]+xCenter, (int)shiftPrism[6][0]+xCenter, (int)shiftPrism[5][0]+xCenter};
-			int[] leftY = {(int)shiftPrism[1][1]+yCenter, (int)shiftPrism[2][1]+yCenter, (int)shiftPrism[6][1]+yCenter, (int)shiftPrism[5][1]+yCenter};
-			
-			int[] rightX = {(int)shiftPrism[0][0]+xCenter, (int)shiftPrism[3][0]+xCenter, (int)shiftPrism[7][0]+xCenter, (int)shiftPrism[4][0]+xCenter};
-			int[] rightY = {(int)shiftPrism[0][1]+yCenter, (int)shiftPrism[3][1]+yCenter, (int)shiftPrism[7][1]+yCenter, (int)shiftPrism[4][1]+yCenter};
-			
-			
-			context.g2D.fillPolygon(backX, backY, 4);
-			context.g2D.fillPolygon(frontX, frontY, 4);
-			context.g2D.fillPolygon(leftX, leftY, 4);
-			context.g2D.fillPolygon(rightX, rightY, 4);
-			
-			myColor = new Color(100,100,0);
-			context.g2D.setColor(myColor);
-			context.g2D.fillPolygon(bottomX, bottomY, 4);
-			context.g2D.fillPolygon(topX, topY, 4);
+
+					
 			
 		 }
 		
@@ -197,7 +139,6 @@ public class Shift extends Effect{
 				average = 20;
 			}
 		
-			yValueLeft[i] = average;
 		
 		
 		    float spacing = i*1.5f*width;
@@ -220,71 +161,25 @@ public class Shift extends Effect{
 			shiftPrism[k] = Objects3D.matrixMultiply(prism[k], xMatrix);
 			shiftPrism[k] = Objects3D.matrixMultiply(shiftPrism[k], yMatrix);
 			shiftPrism[k] = Objects3D.matrixMultiply(shiftPrism[k], zMatrix);
+			shiftedCollection[i*8+k+64] = shiftPrism[k];
 			//System.out.format("Position %d: %f,%f,%f%n", i, shiftPrism[i][0],shiftPrism[i][1],shiftPrism[i][2]);
 		}
 		
-//		float[] result = Objects3D.matrixMultiply(new float[] {100,50,25}, new float[][] {{1,2,3},{4,5,6},{7,8,9}});
-//		
-//		String test =  String.format("%f,%f,%f", result[0], result[1], result[2]);
-//		
-//		context.g2D.drawString(test, 50, 50);
-		
-//		myColor = new Color(255,0,0);
-//		context.g2D.setColor(myColor);
-//		context.g2D.drawLine((int)shiftPrism[0][0]+context.canvas_w/2, (int)shiftPrism[0][1]+context.canvas_h/2, (int)shiftPrism[1][0]+context.canvas_w/2, (int)shiftPrism[1][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[1][0]+context.canvas_w/2, (int)shiftPrism[1][1]+context.canvas_h/2, (int)shiftPrism[2][0]+context.canvas_w/2, (int)shiftPrism[2][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[2][0]+context.canvas_w/2, (int)shiftPrism[2][1]+context.canvas_h/2, (int)shiftPrism[3][0]+context.canvas_w/2, (int)shiftPrism[3][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[3][0]+context.canvas_w/2, (int)shiftPrism[3][1]+context.canvas_h/2, (int)shiftPrism[0][0]+context.canvas_w/2, (int)shiftPrism[0][1]+context.canvas_h/2);
-//		
-//		myColor = new Color(0,255,0);
-//		context.g2D.setColor(myColor);
-//		context.g2D.drawLine((int)shiftPrism[4][0]+context.canvas_w/2, (int)shiftPrism[4][1]+context.canvas_h/2, (int)shiftPrism[5][0]+context.canvas_w/2, (int)shiftPrism[5][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[5][0]+context.canvas_w/2, (int)shiftPrism[5][1]+context.canvas_h/2, (int)shiftPrism[6][0]+context.canvas_w/2, (int)shiftPrism[6][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[6][0]+context.canvas_w/2, (int)shiftPrism[6][1]+context.canvas_h/2, (int)shiftPrism[7][0]+context.canvas_w/2, (int)shiftPrism[7][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[7][0]+context.canvas_w/2, (int)shiftPrism[7][1]+context.canvas_h/2, (int)shiftPrism[4][0]+context.canvas_w/2, (int)shiftPrism[4][1]+context.canvas_h/2);
-//		
-//		myColor = new Color(0,0,255);
-//		context.g2D.setColor(myColor);
-//		context.g2D.drawLine((int)shiftPrism[0][0]+context.canvas_w/2, (int)shiftPrism[0][1]+context.canvas_h/2, (int)shiftPrism[4][0]+context.canvas_w/2, (int)shiftPrism[4][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[1][0]+context.canvas_w/2, (int)shiftPrism[1][1]+context.canvas_h/2, (int)shiftPrism[5][0]+context.canvas_w/2, (int)shiftPrism[5][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[2][0]+context.canvas_w/2, (int)shiftPrism[2][1]+context.canvas_h/2, (int)shiftPrism[6][0]+context.canvas_w/2, (int)shiftPrism[6][1]+context.canvas_h/2);
-//		context.g2D.drawLine((int)shiftPrism[3][0]+context.canvas_w/2, (int)shiftPrism[3][1]+context.canvas_h/2, (int)shiftPrism[7][0]+context.canvas_w/2, (int)shiftPrism[7][1]+context.canvas_h/2);
-	
-		myColor = new Color(200,200,0);
-		context.g2D.setColor(myColor);
-		int xCenter = context.canvas_w/2;
-		int yCenter = context.canvas_h/2;
-		
-		int[] bottomX = {(int)shiftPrism[0][0]+xCenter, (int)shiftPrism[1][0]+xCenter, (int)shiftPrism[2][0]+xCenter, (int)shiftPrism[3][0]+xCenter};
-		int[] bottomY = {(int)shiftPrism[0][1]+yCenter, (int)shiftPrism[1][1]+yCenter, (int)shiftPrism[2][1]+yCenter, (int)shiftPrism[3][1]+yCenter};
-		
-		int[] topX = {(int)shiftPrism[4][0]+xCenter, (int)shiftPrism[5][0]+xCenter, (int)shiftPrism[6][0]+xCenter, (int)shiftPrism[7][0]+xCenter};
-		int[] topY = {(int)shiftPrism[4][1]+yCenter, (int)shiftPrism[5][1]+yCenter, (int)shiftPrism[6][1]+yCenter, (int)shiftPrism[7][1]+yCenter};
-		
-		int[] frontX = {(int)shiftPrism[0][0]+xCenter, (int)shiftPrism[1][0]+xCenter, (int)shiftPrism[5][0]+xCenter, (int)shiftPrism[4][0]+xCenter};
-		int[] frontY = {(int)shiftPrism[0][1]+yCenter, (int)shiftPrism[1][1]+yCenter, (int)shiftPrism[5][1]+yCenter, (int)shiftPrism[4][1]+yCenter};
-		
-		int[] backX = {(int)shiftPrism[2][0]+xCenter, (int)shiftPrism[3][0]+xCenter, (int)shiftPrism[7][0]+xCenter, (int)shiftPrism[6][0]+xCenter};
-		int[] backY = {(int)shiftPrism[2][1]+yCenter, (int)shiftPrism[3][1]+yCenter, (int)shiftPrism[7][1]+yCenter, (int)shiftPrism[6][1]+yCenter};
-		
-		int[] leftX = {(int)shiftPrism[1][0]+xCenter, (int)shiftPrism[2][0]+xCenter, (int)shiftPrism[6][0]+xCenter, (int)shiftPrism[5][0]+xCenter};
-		int[] leftY = {(int)shiftPrism[1][1]+yCenter, (int)shiftPrism[2][1]+yCenter, (int)shiftPrism[6][1]+yCenter, (int)shiftPrism[5][1]+yCenter};
-		
-		int[] rightX = {(int)shiftPrism[0][0]+xCenter, (int)shiftPrism[3][0]+xCenter, (int)shiftPrism[7][0]+xCenter, (int)shiftPrism[4][0]+xCenter};
-		int[] rightY = {(int)shiftPrism[0][1]+yCenter, (int)shiftPrism[3][1]+yCenter, (int)shiftPrism[7][1]+yCenter, (int)shiftPrism[4][1]+yCenter};
-		
-		
-		context.g2D.fillPolygon(backX, backY, 4);
-		context.g2D.fillPolygon(frontX, frontY, 4);
-		context.g2D.fillPolygon(leftX, leftY, 4);
-		context.g2D.fillPolygon(rightX, rightY, 4);
-		
-		myColor = new Color(100,100,0);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(bottomX, bottomY, 4);
-		context.g2D.fillPolygon(topX, topY, 4);
-		
 	 }
+		
+		if(xRotation > 0) {
+			if(yRotation > 0) {
+				drawLeftUp(context);
+			}else {
+				drawRightUp(context);
+			}
+		}else {
+			if(yRotation > 0) {
+				drawLeftDown(context);
+			}else {
+				drawRightDown(context);
+			}
+		}
 		
 		xRotation += xSpeed;
 		yRotation += ySpeed;
@@ -305,6 +200,163 @@ public class Shift extends Effect{
 	}
 
 	
+	
+	public static void drawLeftUp(RenderContext context){
+		
+		Color myColor = new Color(0,255,0);
+		context.g2D.setColor(myColor);
+		int xCenter = context.canvas_w/2;
+		int yCenter = context.canvas_h/2;
+		
+		int[] topX;
+		int[] topY;
+		int[] frontX;
+		int[] frontY;
+		int[] leftX;
+		int[] leftY;
+		
+		for(int i = 15; i > -1; i--){
+		
+			topX = new int[]{(int)shiftedCollection[(i*8)+4][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter, (int)shiftedCollection[(i*8)+6][0]+xCenter, (int)shiftedCollection[(i*8)+7][0]+xCenter};
+			topY = new int[]{(int)shiftedCollection[(i*8)+4][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter};
+			
+			frontX = new int[]{(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
+			frontY = new int[]{(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
+					
+			leftX = new int[]{(int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+2][0]+xCenter, (int)shiftedCollection[(i*8)+6][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter};
+			leftY = new int[]{(int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter};
+					
+		
+		myColor = new Color(0,16*i,255);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(frontX, frontY, 4);
+		context.g2D.fillPolygon(leftX, leftY, 4);
+		myColor = new Color(255,10*i,0);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(topX, topY, 4);
+		}
+		
+	}
+	
+	public static void drawRightUp(RenderContext context){
+		
+		Color myColor = new Color(255,0,0);
+		context.g2D.setColor(myColor);
+		int xCenter = context.canvas_w/2;
+		int yCenter = context.canvas_h/2;
+		
+		int[] topX;
+		int[] topY;
+		
+		int[] frontX;
+		int[] frontY;
+		
+		int[] rightX;
+		int[] rightY;
+		
+		for(int i = 0; i < 16; i++) {
+	
+		topX = new int[] {(int)shiftedCollection[(i*8)+4][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter, (int)shiftedCollection[(i*8)+6][0]+xCenter, (int)shiftedCollection[(i*8)+7][0]+xCenter};
+		topY = new int[] {(int)shiftedCollection[(i*8)+4][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter};
+		
+		frontX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
+		frontY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
+				
+		rightX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+3][0]+xCenter, (int)shiftedCollection[(i*8)+7][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
+		rightY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
+		
+
+		myColor = new Color(0,16*i,255);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(frontX, frontY, 4);
+		context.g2D.fillPolygon(rightX, rightY, 4);
+		myColor = new Color(255,10*i,0);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(topX, topY, 4);
+		
+		}
+		
+	}
+
+	public static void drawLeftDown(RenderContext context){
+		
+		Color myColor = new Color(0,0,255);
+		context.g2D.setColor(myColor);
+		int xCenter = context.canvas_w/2;
+		int yCenter = context.canvas_h/2;
+		
+		int[] bottomX;
+		int[] bottomY;
+		int[] frontX;
+		int[] frontY;
+		int[] leftX;
+		int[] leftY;
+		
+		for(int i = 15; i > -1; i--){
+			bottomX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+2][0]+xCenter, (int)shiftedCollection[(i*8)+3][0]+xCenter};
+			bottomY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter};
+						
+			frontX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
+			frontY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
+						
+			leftX = new int[] {(int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+2][0]+xCenter, (int)shiftedCollection[(i*8)+6][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter};
+			leftY = new int[] {(int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter};
+			
+		
+
+		myColor = new Color(0,16*i,255);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(frontX, frontY, 4);
+		context.g2D.fillPolygon(leftX, leftY, 4);
+		myColor = new Color(255,10*i,0);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(bottomX, bottomY, 4);
+
+		
+		}
+		
+	}
+
+	public static void drawRightDown(RenderContext context){
+		
+		Color myColor = new Color(255,255,0);
+		context.g2D.setColor(myColor);
+		int xCenter = context.canvas_w/2;
+		int yCenter = context.canvas_h/2;
+		
+		int[] bottomX;
+		int[] bottomY;
+		int[] frontX;
+		int[] frontY;
+		int[] rightX;
+		int[] rightY;
+		
+		for(int i = 0; i < 16; i++) {
+			bottomX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+2][0]+xCenter, (int)shiftedCollection[(i*8)+3][0]+xCenter};
+			bottomY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter};
+			
+			frontX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
+			frontY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};		
+		
+			rightX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+3][0]+xCenter, (int)shiftedCollection[(i*8)+7][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
+			rightY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
+			
+		
+
+
+		myColor = new Color(0,16*i,255);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(rightX, rightY, 4);
+		context.g2D.fillPolygon(frontX, frontY, 4);
+		myColor = new Color(255,10*i,0);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(bottomX, bottomY, 4);
+		
+		
+		}
+		
+	}
+
 	
 	@Override
 	public void update(UpdateContext context) {
