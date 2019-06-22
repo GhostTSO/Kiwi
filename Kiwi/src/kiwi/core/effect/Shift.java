@@ -1,12 +1,10 @@
 package kiwi.core.effect;
 
 import java.awt.BasicStroke;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.RenderingHints;
 
 import kiwi.core.Effect;
-import kiwi.core.Source;
 import kiwi.core.render.RenderContext;
 import kiwi.core.update.UpdateContext;
 import kiwi.math.Objects3D;
@@ -20,9 +18,9 @@ public class Shift extends Effect{
 	public float yRotation = 0.0f;
 	public float zRotation = 0.0f;
 	
-	public float xSpeed = .001f;
-	public float ySpeed = .005f;
-	public float zSpeed = .0015f;
+	public float xSpeed = .001f * 60;
+	public float ySpeed = .005f * 60;
+	public float zSpeed = .0015f * 60;
 	
 	
 	
@@ -61,10 +59,10 @@ public class Shift extends Effect{
 		
 		
 		float average = 0;
-		float scale = context.canvas_h/3;;
+		float scale = context.canvas_h/3f;
 		float logNum = (float)Math.log(50);
-		float shift = context.canvas_w/40;
-		float width = context.canvas_w/20;
+		float shift = context.canvas_w/40f;
+		float width = context.canvas_w/20f;
 		
 		
 		this.xMatrix = new float[][] 	{{1.0f, 				0.0f,					0.0f					},
@@ -181,9 +179,11 @@ public class Shift extends Effect{
 			}
 		}
 		
-		xRotation += xSpeed;
-		yRotation += ySpeed;
-		zRotation += zSpeed;
+		System.out.println(context.dt);
+		
+		xRotation += xSpeed * context.dt;
+		yRotation += ySpeed * context.dt;
+		zRotation += zSpeed * context.dt;
 		
 		if(xRotation> .5 || xRotation < -.5) {
 			xSpeed *= -1;

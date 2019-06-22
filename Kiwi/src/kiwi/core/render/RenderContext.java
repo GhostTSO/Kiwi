@@ -14,6 +14,8 @@ public class RenderContext {
 		canvas_h;
 	public Graphics2D
 		g2D;
+	public float
+		dt;
 	
 	public RenderContext(
 			Complex[] stereo_l,
