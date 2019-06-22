@@ -11,6 +11,7 @@ import kiwi.core.effect.Singularity;
 import kiwi.core.effect.SpaceStation;
 import kiwi.core.effect.SquareSideStereoWave;
 import kiwi.core.effect.StereoWaveform;
+import kiwi.core.effect.Test;
 import kiwi.core.render.Renderable;
 import kiwi.core.update.Updateable;
 
@@ -33,6 +34,7 @@ public abstract class Effect implements Renderable, Updateable {
 		list.add(new Singularity());
 		list.add(new SpaceStation());
 		list.add(new Shift());
+		list.add(new Test());
 		return list;
 	}
 }

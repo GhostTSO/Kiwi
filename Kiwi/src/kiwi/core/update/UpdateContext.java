@@ -10,6 +10,8 @@ public class UpdateContext {
 	public int
 		canvas_w,
 		canvas_h;
+	public float
+		dt;
 	
 	public UpdateContext(
 			Complex[] l_channel,

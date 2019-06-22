@@ -219,7 +219,8 @@ public class Engine implements Runnable {
 		this.window.dispose();
 	}
 	
-	private final void onUpdate() {
+	private final void onUpdate(float dt) {
+		System.out.println(dt);
 		if(this.toggle_fullscreen) {			
 			this.window.dispose();			
 			this.window = new  Frame();
@@ -278,6 +279,7 @@ public class Engine implements Runnable {
 			
 			this.update_context.canvas_w = this.canvas.getWidth();
 			this.update_context.canvas_h = this.canvas.getHeight();
+			this.update_context.dt = dt;
 			
 			this.effect.update(this.update_context);
 		}
@@ -289,7 +291,7 @@ public class Engine implements Runnable {
 	private static final Font
 		debug_font = new Font("Courier New", Font.PLAIN, 10);
 	
-	private final void onRender() {
+	private final void onRender(float dt) {
 		if(this.effect != null) {
 			if(this.buffer_strategy == null || this.buffer_strategy.contentsLost()) {
 				this.canvas.createBufferStrategy(2);
@@ -298,6 +300,7 @@ public class Engine implements Runnable {
 			this.render_context.g2D = (Graphics2D)this.buffer_strategy.getDrawGraphics();
 			this.render_context.canvas_w = this.canvas.getWidth();
 			this.render_context.canvas_h = this.canvas.getHeight();
+			this.render_context.dt = dt;
 			
 			this.effect.render(this.render_context);
 			
@@ -358,20 +361,20 @@ public class Engine implements Runnable {
 				f_ct = 0,
 				t_ct = 0,
 				t = System.nanoTime();
-			this.onUpdate();
-			this.onRender();
+			this.onUpdate(0f);
+			this.onRender(0f);
 			while(!Thread.interrupted()) {
 				long dt = - t + (t = System.nanoTime());
 				f_elapsed += dt;
 				t_elapsed += dt;
 				elapsed += dt;				
 				if(t_elapsed >= t_time) {
-					this.onUpdate();
+					this.onUpdate((float)t_elapsed / ONE_SECOND);
 					t_elapsed= 0;
 					t_ct ++;
 				}
 				if(f_elapsed >= f_time) {
-					this.onRender();
+					this.onRender((float)f_elapsed / ONE_SECOND);
 					f_elapsed = 0;
 					f_ct ++;
 				}
