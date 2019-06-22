@@ -19,7 +19,7 @@ public class Shift extends Effect{
  	public float xRotation = 0.0f;
 	public float yRotation = 0.0f;
 	public float zRotation = 0.0f;
-	
+	 
 	public float xSpeed = .001f;
 	public float ySpeed = .005f;
 	public float zSpeed = .0015f;
