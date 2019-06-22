@@ -5,7 +5,7 @@ import kiwi.core.Engine;
 public class Kiwi {
 	
 	public static final Version
-		VERSION = new Version("Kiwi", 1, 1, 0);
+		VERSION = new Version("Kiwi", 1, 1, 1);
 	
 	public static void main(String[] args) {
 		Engine engine = new Engine();

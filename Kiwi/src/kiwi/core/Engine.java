@@ -31,7 +31,7 @@ public class Engine {
 	public int
 		effect_fps = 60,
 		effect_tps = 60,
-		source_poll_rate = 48;
+		source_poll_rate = 60;
 
 	protected Canvas
 		canvas = new Canvas(this);
