@@ -9,11 +9,8 @@ import java.awt.RenderingHints;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
-import kiwi.core.Effect;
-import kiwi.core.Source;
-import kiwi.core.render.RenderContext;
-import kiwi.core.update.UpdateContext;
-import kiwi.core.update.Updateable;
+import kiwi.core.Updateable;
+import kiwi.core.source.Source;
 import kiwi.util.Util;
 
 public class Continuum extends Effect {

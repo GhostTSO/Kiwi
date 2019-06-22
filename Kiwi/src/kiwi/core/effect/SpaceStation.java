@@ -4,11 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.RenderingHints;
 
-import kiwi.core.Effect;
-import kiwi.core.Source;
-import kiwi.core.render.RenderContext;
-import kiwi.core.update.UpdateContext;
-
 public class SpaceStation extends Effect{
 	
 	
