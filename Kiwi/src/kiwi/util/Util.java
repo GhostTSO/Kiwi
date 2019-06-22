@@ -1,6 +1,15 @@
 package kiwi.util;
 
+import java.awt.Toolkit;
+
+import kiwi.math.Complex;
+
 public class Util {
+	public static final int
+		FULLSCREEN_W = Toolkit.getDefaultToolkit().getScreenSize().width ,
+		FULLSCREEN_H = Toolkit.getDefaultToolkit().getScreenSize().height;
+	public static final float
+		PI = (float)Math.PI;
 	
 	public static final float map(float x, float a, float b) {
 		return (x - a) / (b - a);
@@ -156,5 +165,44 @@ public class Util {
 		} catch(Exception ex) {
 			return alt;
 		}
+	}
+	
+	public static final void fft(Complex[] x) {
+		int n = x.length;
+
+        // bit reversal permutation
+        int shift = 1 + Integer.numberOfLeadingZeros(n);
+        for (int k = 0; k < n; k++) {
+            int j = Integer.reverse(k) >>> shift;
+            if (j > k) {
+                Complex temp = x[j];
+                x[j] = x[k];
+                x[k] = temp;
+            }
+        }
+
+        // butterfly updates
+        for (int L = 2; L <= n; L = L + L) {
+            for (int k = 0; k < L/2; k ++) {
+                float kth = -2 * k * PI / L;
+                Complex w = new Complex(
+                		Util.cos(kth), 
+                		Util.sin(kth)
+                		);
+                for (int j = 0; j < n/L; j++) {
+                    Complex tao = w.mul(x[j*L + k + L/2]);
+                    x[j*L + k + L/2] = x[j*L + k].sub(tao); 
+                    x[j*L + k]       = x[j*L + k].add(tao); 
+                }
+            }
+        }
+        
+        for(int i = 0; i < x.length; i ++) {
+    		float
+	    		mag = (float)Math.sqrt( x[i].re * x[i].re + x[i].im * x[i].im) / n,
+	    		ang = (float)Math.atan2(x[i].im , x[i].re);
+	    	x[i].re = mag;
+	    	x[i].im = ang;
+    	}
 	}
 }

@@ -1,19 +1,9 @@
-package kiwi.core;
+package kiwi.core.effect;
 import java.util.LinkedList;
 import java.util.List;
 
-import kiwi.core.effect.Circularity;
-import kiwi.core.effect.Continuum;
-import kiwi.core.effect.InvertedCircularity;
-import kiwi.core.effect.Shift;
-import kiwi.core.effect.SideStereoWaveForm;
-import kiwi.core.effect.Singularity;
-import kiwi.core.effect.SpaceStation;
-import kiwi.core.effect.SquareSideStereoWave;
-import kiwi.core.effect.StereoWaveform;
-import kiwi.core.effect.Test;
-import kiwi.core.render.Renderable;
-import kiwi.core.update.Updateable;
+import kiwi.core.Renderable;
+import kiwi.core.Updateable;
 
 public abstract class Effect implements Renderable, Updateable {
 	public final String

@@ -3,10 +3,7 @@ package kiwi.core.effect;
 import java.awt.BasicStroke;
 import java.awt.Color;
 
-import kiwi.core.Effect;
-import kiwi.core.Source;
-import kiwi.core.render.RenderContext;
-import kiwi.core.update.UpdateContext;
+import kiwi.core.source.Source;
 
 public class StereoWaveform extends Effect {
 		

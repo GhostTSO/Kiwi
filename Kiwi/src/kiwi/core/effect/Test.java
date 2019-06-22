@@ -2,10 +2,6 @@ package kiwi.core.effect;
 
 import java.awt.Color;
 
-import kiwi.core.Effect;
-import kiwi.core.render.RenderContext;
-import kiwi.core.update.UpdateContext;
-
 public class Test extends Effect {
 	float
 		x,

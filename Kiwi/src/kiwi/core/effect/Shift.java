@@ -4,9 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.RenderingHints;
 
-import kiwi.core.Effect;
-import kiwi.core.render.RenderContext;
-import kiwi.core.update.UpdateContext;
 import kiwi.math.Objects3D;
 
 public class Shift extends Effect{
@@ -21,6 +18,7 @@ public class Shift extends Effect{
 	public float xSpeed = .001f * 60;
 	public float ySpeed = .005f * 60;
 	public float zSpeed = .0015f * 60;
+
 	
 	
 	
@@ -179,11 +177,9 @@ public class Shift extends Effect{
 			}
 		}
 		
-		System.out.println(context.dt);
-		
-		xRotation += xSpeed * context.dt;
-		yRotation += ySpeed * context.dt;
-		zRotation += zSpeed * context.dt;
+		xRotation += xSpeed;
+		yRotation += ySpeed;
+		zRotation += zSpeed;
 		
 		if(xRotation> .5 || xRotation < -.5) {
 			xSpeed *= -1;

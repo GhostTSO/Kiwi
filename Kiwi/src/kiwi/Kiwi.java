@@ -5,10 +5,11 @@ import kiwi.core.Engine;
 public class Kiwi {
 	
 	public static final Version
-		VERSION = new Version("Kiwi", 1, 0, 4);
+		VERSION = new Version("Kiwi", 1, 1, 2);
 	
 	public static void main(String[] args) {
-		Engine.init();
+		Engine engine = new Engine();
+		engine.init();
 	}
 	
 	public static class Version {
