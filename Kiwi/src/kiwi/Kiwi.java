@@ -2,12 +2,13 @@ package kiwi;
 
 import kiwi.core.Engine;
 
-public class Kiwi {
-	
+public class Kiwi {	
 	public static final Version
 		VERSION = new Version("Kiwi", 1, 1, 2);
 	
 	public static void main(String[] args) {
+		System.out.println(VERSION);
+		
 		Engine engine = new Engine();
 		engine.init();
 	}

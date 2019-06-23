@@ -31,7 +31,7 @@ public class Engine {
 	public int
 		effect_fps = 60,
 		effect_tps = 60,
-		source_poll_rate = 48;
+		source_poll_rate = 60;
 
 	protected Canvas
 		canvas = new Canvas(this);
@@ -41,6 +41,8 @@ public class Engine {
 	protected Thread
 		effect_thread,
 		source_thread;	
+	protected float
+		volume = 1f;
 	protected long
 		fps,
 		tps;
@@ -50,7 +52,7 @@ public class Engine {
 	protected List<Effect>
 		effects;	
 	protected Effect
-		effect;
+		effect;		
 	
 	protected final Complex[]
 		stereo_l_buffer1 = new Complex[Source.SAMPLES],
@@ -131,7 +133,7 @@ public class Engine {
 					elapsed = 0,
 					f_ct = 0,
 					t_ct = 0,
-					t = System.nanoTime();					
+					t = System.nanoTime();
 				while(!Thread.interrupted()) {
 					long dt = - t + (t = System.nanoTime());
 					f_elapsed += dt;
@@ -179,7 +181,7 @@ public class Engine {
 			}
 		};
 		
-	public void update(float dt) {		
+	public void update(float dt) {	
 		if(this.effect != null) {
 			for(int i = 0; i < Source.SAMPLES; i ++) {
 				this.stereo_l[i].set(this.stereo_l_buffer2[i]);
@@ -246,9 +248,9 @@ public class Engine {
 			Util.fft(this.stereo_r_buffer1);
 			Util.fft(this.mono_buffer1);
 			for(int i = 0; i < Source.SAMPLES; i ++) {
-				this.stereo_l_buffer2[i].set(this.stereo_l_buffer1[i]);
-				this.stereo_r_buffer2[i].set(this.stereo_r_buffer1[i]);
-				this.mono_buffer2[i].set(this.mono_buffer1[i]);
+				this.stereo_l_buffer2[i].set(this.stereo_l_buffer1[i].re * volume, this.stereo_l_buffer1[i].im);
+				this.stereo_r_buffer2[i].set(this.stereo_r_buffer1[i].re * volume, this.stereo_r_buffer1[i].im);
+				this.mono_buffer2[i].set(this.mono_buffer1[i].re * volume, this.mono_buffer1[i].im);
 			}
 		}
 	}	
@@ -280,7 +282,8 @@ public class Engine {
 			mb = new MenuBar();
 		protected java.awt.Menu
 			m1 = new Menu("Effect"),
-			m2 = new Menu("Source");
+			m2 = new Menu("Source"),
+			m3 = new Menu("Volume");
 		
 		protected int
 			w,
@@ -297,6 +300,7 @@ public class Engine {
 			this.parent = parent;
 			this.mb.add(m1);
 			this.mb.add(m2);
+			this.mb.add(m3);
 			this.component.setMenuBar(this.mb);
 			this.component.add(this.parent.canvas.component);
 			
@@ -317,6 +321,7 @@ public class Engine {
 			this.component.dispose();			
 			this.m1.removeAll();
 			this.m2.removeAll();
+			this.m3.removeAll();
 			
 			for(Effect effect: this.parent.effects) {
 				MenuItem mi = new MenuItem(effect.name);
@@ -334,6 +339,19 @@ public class Engine {
 						source.close();
 				});
 				this.m2.add(cbmi);
+			}
+			int v = 25;
+			for(int i = 25; i <= 500; i += v) {
+				MenuItem mi = new MenuItem(i + "%");
+				float volume = i / 100f;
+				mi.addActionListener((ae) -> {
+					parent.volume = volume;
+				});
+				if(i >= 100)
+					v = 50;
+				if(i >= 200)
+					v = 100;
+				m3.add(mi);
 			}
 			
 			int
