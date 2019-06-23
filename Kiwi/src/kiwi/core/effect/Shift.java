@@ -1,5 +1,6 @@
 package kiwi.core.effect;
 
+import java.lang.*;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.RenderingHints;
@@ -15,10 +16,11 @@ public class Shift extends Effect{
 	public float yRotation = 0.0f;
 	public float zRotation = 0.0f;
 
-	public float xSpeed = .001f * 60;
-	public float ySpeed = .005f * 60;
-	public float zSpeed = .0015f * 60;
+	public float xSpeed = .001f;
+	public float ySpeed = .005f;
+	public float zSpeed = .0015f;
 
+	public float[] lastAverages = new float[16];
 	
 	
 	
@@ -44,11 +46,11 @@ public class Shift extends Effect{
 	@Override
 	public void render(RenderContext context) {
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		Color myColor = new Color(0,0,0);
+		Color myColor = new Color(250,200,130);
 		context.g2D.setColor(myColor);
 		context.g2D.setStroke(new BasicStroke(3));
 		
-		context.g2D.clearRect(
+		context.g2D.fillRect(
 				0,
 				0,
 				context.canvas_w,
@@ -84,11 +86,15 @@ public class Shift extends Effect{
 			
 				average /= 25;
 			
-				if(average < 20) {
+				average = (lastAverages[i] + average)/2.0f;
+				
+				if(average < 20 || Float.isNaN(average) ) {
 					average = 20;
 				}
-			
-			
+				
+				lastAverages[i] = average;
+				
+				
 			
 				float spacing = i*1.5f*-width;
 				float left = (spacing)-shift-1.5f*width/2;
@@ -115,13 +121,9 @@ public class Shift extends Effect{
 				//System.out.format("Position %d: %f,%f,%f%n", i, shiftPrism[i][0],shiftPrism[i][1],shiftPrism[i][2]);
 			}
 			
-		
-			
-
-					
 			
 		 }
-		
+			
 		
 		for(int i = 0; i < 8; i++) {
 			average = 0;
@@ -131,11 +133,16 @@ public class Shift extends Effect{
 		
 			average /= 25;
 		
-			if(average < 20) {
+			average = (lastAverages[i+8] + average)/2;
+			
+			if(average < 20 || Float.isNaN(average) ) {
 				average = 20;
 			}
 		
-		
+			
+			lastAverages[i+8] = average;
+			
+			
 		
 		    float spacing = i*1.5f*width;
 			float left = (spacing)-shift+1.5f*width/2;
@@ -223,11 +230,13 @@ public class Shift extends Effect{
 			leftY = new int[]{(int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter};
 					
 		
-		myColor = new Color(0,16*i,255);
+		myColor = new Color(255,100,225);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(leftX, leftY, 4);
+		myColor = new Color(255,150,225);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(frontX, frontY, 4);
-		context.g2D.fillPolygon(leftX, leftY, 4);
-		myColor = new Color(255,10*i,0);
+		myColor = new Color(255,175,255);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(topX, topY, 4);
 		}
@@ -262,11 +271,13 @@ public class Shift extends Effect{
 		rightY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
 		
 
-		myColor = new Color(0,16*i,255);
+		myColor = new Color(255,100,225);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(rightX, rightY, 4);
+		myColor = new Color(255,150,225);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(frontX, frontY, 4);
-		context.g2D.fillPolygon(rightX, rightY, 4);
-		myColor = new Color(255,10*i,0);
+		myColor = new Color(255,175,255);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(topX, topY, 4);
 		
@@ -300,11 +311,13 @@ public class Shift extends Effect{
 			
 		
 
-		myColor = new Color(0,16*i,255);
+		myColor = new Color(255,100,225);
+		context.g2D.setColor(myColor);
+		context.g2D.fillPolygon(leftX, leftY, 4);
+		myColor = new Color(255,150,225);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(frontX, frontY, 4);
-		context.g2D.fillPolygon(leftX, leftY, 4);
-		myColor = new Color(255,10*i,0);
+		myColor = new Color(205,50,175);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(bottomX, bottomY, 4);
 
@@ -340,11 +353,13 @@ public class Shift extends Effect{
 		
 
 
-		myColor = new Color(0,16*i,255);
+		myColor = new Color(255,100,225);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(rightX, rightY, 4);
+		myColor = new Color(255,150,225);
+		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(frontX, frontY, 4);
-		myColor = new Color(255,10*i,0);
+		myColor = new Color(205,50,175);
 		context.g2D.setColor(myColor);
 		context.g2D.fillPolygon(bottomX, bottomY, 4);
 		
