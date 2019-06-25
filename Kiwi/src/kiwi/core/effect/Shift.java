@@ -1,6 +1,6 @@
 package kiwi.core.effect;
 
-import java.lang.*;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.RenderingHints;
@@ -12,15 +12,15 @@ public class Shift extends Effect{
 	public float[][] prism = new float[8][3];
 	public static float[][] shiftPrism = new float[8][3];
 	public static float[][] shiftedCollection = new float[128][3];
- 	public float xRotation = 0.0f;
-	public float yRotation = 0.0f;
-	public float zRotation = 0.0f;
+ 	public float xRotation = 0.100f;
+	public float yRotation = 0.01f;
+	public float zRotation = 0.10f;
 
 	public float xSpeed = .001f;
 	public float ySpeed = .005f;
 	public float zSpeed = .0015f;
 
-	public float[] lastAverages = new float[16];
+	public static float[] lastAverages = new float[16];
 	
 	
 	
@@ -46,7 +46,7 @@ public class Shift extends Effect{
 	@Override
 	public void render(RenderContext context) {
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		Color myColor = new Color(250,200,130);
+		Color myColor = new Color(122, 180, 255);
 		context.g2D.setColor(myColor);
 		context.g2D.setStroke(new BasicStroke(3));
 		
@@ -86,13 +86,13 @@ public class Shift extends Effect{
 			
 				average /= 25;
 			
-				average = (lastAverages[i] + average)/2.0f;
+				average = (lastAverages[7-i] + average)/2.0f;
 				
 				if(average < 20 || Float.isNaN(average) ) {
 					average = 20;
 				}
 				
-				lastAverages[i] = average;
+				lastAverages[7-i] = average;
 				
 				
 			
@@ -170,6 +170,8 @@ public class Shift extends Effect{
 		
 	 }
 		
+
+		
 		if(xRotation > 0) {
 			if(yRotation > 0) {
 				drawLeftUp(context);
@@ -182,6 +184,31 @@ public class Shift extends Effect{
 			}else {
 				drawRightDown(context);
 			}
+		}
+		
+		float averageTotal = 0;
+		
+		for(int i = 0; i < lastAverages.length; i++) {
+			averageTotal += lastAverages[i];
+		}
+
+		
+		if(xSpeed > 0) {
+		xSpeed = averageTotal * .0006f * context.dt;
+		
+		} else {
+			xSpeed = averageTotal * -.0006f * context.dt;
+			
+		}
+		if(ySpeed > 0) {
+		ySpeed = averageTotal * .00012f * context.dt;
+		}else {
+		ySpeed = averageTotal * -.00012f * context.dt;
+		}
+		if(zSpeed > 0) {
+		zSpeed = averageTotal * .0003f * context.dt;
+		}else {
+		zSpeed = averageTotal * -.0003f * context.dt;
 		}
 		
 		xRotation += xSpeed;
@@ -206,7 +233,7 @@ public class Shift extends Effect{
 	
 	public static void drawLeftUp(RenderContext context){
 		
-		Color myColor = new Color(0,255,0);
+		Color myColor = new Color(122,50,255);
 		context.g2D.setColor(myColor);
 		int xCenter = context.canvas_w/2;
 		int yCenter = context.canvas_h/2;
@@ -228,24 +255,52 @@ public class Shift extends Effect{
 					
 			leftX = new int[]{(int)shiftedCollection[(i*8)+1][0]+xCenter, (int)shiftedCollection[(i*8)+2][0]+xCenter, (int)shiftedCollection[(i*8)+6][0]+xCenter, (int)shiftedCollection[(i*8)+5][0]+xCenter};
 			leftY = new int[]{(int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter};
-					
 		
-		myColor = new Color(255,100,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(leftX, leftY, 4);
-		myColor = new Color(255,150,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(frontX, frontY, 4);
-		myColor = new Color(255,175,255);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(topX, topY, 4);
+			if(lastAverages[i]/2 > 180) {
+				
+				
+				myColor = new Color(180, 0,100);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(leftX, leftY, 4);
+				myColor = new Color(230, 0, 50);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(frontX, frontY, 4);
+				myColor = new Color(255, 0, 0);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(topX, topY, 4);
+
+				
+			}else {
+				myColor = new Color(180, 180-(int)lastAverages[i]/2,100);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(leftX, leftY, 4);
+				myColor = new Color(230, 180-(int)lastAverages[i]/2, 50);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(frontX, frontY, 4);
+				myColor = new Color(255, 180-(int)lastAverages[i]/2, 0);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(topX, topY, 4);
+			}
+		
+//		myColor = new Color(255,100,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(leftX, leftY, 4);
+//		myColor = new Color(255,150,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(frontX, frontY, 4);
+//		myColor = new Color(255,175,255);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(topX, topY, 4);
+//		myColor = new Color(0,0,0);
+//		context.g2D.setColor(myColor);
+//		context.g2D.drawString(Float.toString(lastAverages[i]), 100+100*i, 100);
 		}
 		
 	}
 	
 	public static void drawRightUp(RenderContext context){
 		
-		Color myColor = new Color(255,0,0);
+		Color myColor = new Color(122,50,255);
 		context.g2D.setColor(myColor);
 		int xCenter = context.canvas_w/2;
 		int yCenter = context.canvas_h/2;
@@ -271,23 +326,51 @@ public class Shift extends Effect{
 		rightY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
 		
 
-		myColor = new Color(255,100,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(rightX, rightY, 4);
-		myColor = new Color(255,150,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(frontX, frontY, 4);
-		myColor = new Color(255,175,255);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(topX, topY, 4);
+		if(lastAverages[i]/2 > 180) {
+			
+			
+			myColor = new Color(180, 0,100);
+			context.g2D.setColor(myColor);
+			context.g2D.fillPolygon(rightX, rightY, 4);
+			myColor = new Color(230, 0, 50);
+			context.g2D.setColor(myColor);
+			context.g2D.fillPolygon(frontX, frontY, 4);
+			myColor = new Color(255, 0, 0);
+			context.g2D.setColor(myColor);
+			context.g2D.fillPolygon(topX, topY, 4);
+
+			
+		}else {
+			myColor = new Color(180, 180-(int)lastAverages[i]/2,100);
+			context.g2D.setColor(myColor);
+			context.g2D.fillPolygon(rightX, rightY, 4);
+			myColor = new Color(230, 180-(int)lastAverages[i]/2, 50);
+			context.g2D.setColor(myColor);
+			context.g2D.fillPolygon(frontX, frontY, 4);
+			myColor = new Color(255, 180-(int)lastAverages[i]/2, 0);
+			context.g2D.setColor(myColor);
+			context.g2D.fillPolygon(topX, topY, 4);
+		}
 		
+//		myColor = new Color(255,100,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(rightX, rightY, 4);
+//		myColor = new Color(255,150,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(frontX, frontY, 4);
+//		myColor = new Color(255,175,255);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(topX, topY, 4);
+//		myColor = new Color(0,0,0);
+//		context.g2D.setColor(myColor);
+//		context.g2D.drawString(Float.toString(lastAverages[i]), 100+100*i, 100);
 		}
 		
 	}
 
 	public static void drawLeftDown(RenderContext context){
 		
-		Color myColor = new Color(0,0,255);
+		Color myColor = new Color(122,50,255);
 		context.g2D.setColor(myColor);
 		int xCenter = context.canvas_w/2;
 		int yCenter = context.canvas_h/2;
@@ -310,17 +393,45 @@ public class Shift extends Effect{
 			leftY = new int[] {(int)shiftedCollection[(i*8)+1][1]+yCenter, (int)shiftedCollection[(i*8)+2][1]+yCenter, (int)shiftedCollection[(i*8)+6][1]+yCenter, (int)shiftedCollection[(i*8)+5][1]+yCenter};
 			
 		
+			if(lastAverages[i]/2 > 180) {
+				
+				
+				myColor = new Color(180, 0,100);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(leftX, leftY, 4);
+				myColor = new Color(230, 0, 50);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(frontX, frontY, 4);
+				myColor = new Color(130, 0, 0);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(bottomX, bottomY, 4);
 
-		myColor = new Color(255,100,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(leftX, leftY, 4);
-		myColor = new Color(255,150,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(frontX, frontY, 4);
-		myColor = new Color(205,50,175);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(bottomX, bottomY, 4);
+				
+			}else {
+				myColor = new Color(180, 180-(int)lastAverages[i]/2,100);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(leftX, leftY, 4);
+				myColor = new Color(230, 180-(int)lastAverages[i]/2, 50);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(frontX, frontY, 4);
+				myColor = new Color(130, 180-(int)lastAverages[i]/2, 0);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(bottomX, bottomY, 4);
+			}
+			
 
+//		myColor = new Color(255,100,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(leftX, leftY, 4);
+//		myColor = new Color(255,150,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(frontX, frontY, 4);
+//		myColor = new Color(205,50,175);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(bottomX, bottomY, 4);
+//		myColor = new Color(0,0,0);
+//		context.g2D.setColor(myColor);
+//		context.g2D.drawString(Float.toString(lastAverages[i]), 100+100*i, 100);
 		
 		}
 		
@@ -328,7 +439,7 @@ public class Shift extends Effect{
 
 	public static void drawRightDown(RenderContext context){
 		
-		Color myColor = new Color(255,255,0);
+		Color myColor = new Color(122,50,255);
 		context.g2D.setColor(myColor);
 		int xCenter = context.canvas_w/2;
 		int yCenter = context.canvas_h/2;
@@ -350,19 +461,45 @@ public class Shift extends Effect{
 			rightX = new int[] {(int)shiftedCollection[(i*8)+0][0]+xCenter, (int)shiftedCollection[(i*8)+3][0]+xCenter, (int)shiftedCollection[(i*8)+7][0]+xCenter, (int)shiftedCollection[(i*8)+4][0]+xCenter};
 			rightY = new int[] {(int)shiftedCollection[(i*8)+0][1]+yCenter, (int)shiftedCollection[(i*8)+3][1]+yCenter, (int)shiftedCollection[(i*8)+7][1]+yCenter, (int)shiftedCollection[(i*8)+4][1]+yCenter};
 			
-		
+			if(lastAverages[i]/2 > 180) {
+				
+				
+				myColor = new Color(180, 0,100);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(rightX, rightY, 4);
+				myColor = new Color(230, 0, 50);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(frontX, frontY, 4);
+				myColor = new Color(130, 0, 0);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(bottomX, bottomY, 4);
+
+				
+			}else {
+				myColor = new Color(180, 180-(int)lastAverages[i]/2,100);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(rightX, rightY, 4);
+				myColor = new Color(230, 180-(int)lastAverages[i]/2, 50);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(frontX, frontY, 4);
+				myColor = new Color(130, 180-(int)lastAverages[i]/2, 0);
+				context.g2D.setColor(myColor);
+				context.g2D.fillPolygon(bottomX, bottomY, 4);
+			}
 
 
-		myColor = new Color(255,100,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(rightX, rightY, 4);
-		myColor = new Color(255,150,225);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(frontX, frontY, 4);
-		myColor = new Color(205,50,175);
-		context.g2D.setColor(myColor);
-		context.g2D.fillPolygon(bottomX, bottomY, 4);
-		
+//		myColor = new Color(255,100,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(rightX, rightY, 4);
+//		myColor = new Color(255,150,225);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(frontX, frontY, 4);
+//		myColor = new Color(205,50,175);
+//		context.g2D.setColor(myColor);
+//		context.g2D.fillPolygon(bottomX, bottomY, 4);
+//		myColor = new Color(0,0,0);
+//		context.g2D.setColor(myColor);
+//		context.g2D.drawString(Float.toString(lastAverages[i]), 100+100*i, 100);
 		
 		}
 		
