@@ -24,7 +24,6 @@ public abstract class Effect implements Renderable, Updateable {
 		list.add(new Singularity());
 		list.add(new SpaceStation());
 		list.add(new Shift());
-		list.add(new Test());
 		return list;
 	}
 }

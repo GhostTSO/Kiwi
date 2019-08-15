@@ -4,6 +4,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.RenderingHints;
 
+import kiwi.core.source.Source;
+
 public class SpaceStation extends Effect{
 	
 	
@@ -13,7 +15,7 @@ public class SpaceStation extends Effect{
 	}
 	
 	@Override
-	public void render(RenderContext context) {
+	public void render(RenderContext context, boolean scaling) {
 		
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Color myColor = new Color(0,0,0);
@@ -33,7 +35,11 @@ public class SpaceStation extends Effect{
 		double logNum = Math.log(50);
 		double wSpacing = (double)context.canvas_w/20;
 		double hSpacing = (double)context.canvas_w/20*Math.tan(45);
-		double scale = context.canvas_h/3;
+		double scale;
+		if(scaling == true) {
+			scale = context.canvas_h/200;}
+			else {
+			scale = context.canvas_h/3;}
 		double average = 0;
 		
 	
@@ -43,7 +49,12 @@ public class SpaceStation extends Effect{
 			context.g2D.setColor(myColor);
 			average = 0;
 			for(int j = 0; j < 25; j++) {
-				average += scale*(Math.log(context.stereo_l[(25*i)+j].re))/logNum;
+				if(scaling == true) {
+					root = context.stereo_l[(25*i)+j].re;
+				}else {
+					average += scale*(Math.log(context.stereo_l[(25*i)+j].re))/logNum;
+				}
+				
 			}
 			average /= 25;
 
@@ -77,7 +88,12 @@ public class SpaceStation extends Effect{
 			
 			average = 0;
 			for(int j = 0; j < 25; j++) {
-				average += scale*(Math.log(context.stereo_r[(25*i)+j].re))/logNum;
+				if(scaling == true) {
+					root = scale*context.stereo_r[(25*i)+j].re;
+				}else {
+					average += scale*(Math.log(context.stereo_r[(25*i)+j].re))/logNum;
+				}
+				
 			}
 			average /= 25;
 
@@ -113,6 +129,10 @@ public class SpaceStation extends Effect{
 	}
 }
 
+	@Override
+	public void render(RenderContext context) {
+		
+	}
 	
 	@Override
 	public void update(UpdateContext context) {

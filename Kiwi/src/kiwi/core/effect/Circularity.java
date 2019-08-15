@@ -14,7 +14,7 @@ public class Circularity extends Effect{
 	}
 	
 	@Override
-	public void render(RenderContext context) {
+	public void render(RenderContext context, boolean scaling) {
 		
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
@@ -29,7 +29,11 @@ public class Circularity extends Effect{
 		
 		double root;
 		double logNum = Math.log(50);
-		double scale = context.canvas_h/4;
+		double scale;
+		if(scaling == true) {
+			scale = context.canvas_h/250;}
+			else {
+			scale = context.canvas_h/4;}
 		Color myColor;
 		
 		int circleWidth = context.canvas_h/50;
@@ -43,7 +47,14 @@ public class Circularity extends Effect{
 			context.g2D.setColor(myColor);	
 			
 			if(context.stereo_l[i+3*Source.SAMPLES/4].re > 1) {
-				root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re))/logNum;
+				
+				if(scaling == true) {
+					root = scale*context.stereo_l[i+3*Source.SAMPLES/4].re;
+				}else {
+					root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re))/logNum;
+				}
+				
+				
 				if(root > peaksLeft[i]) {
 					peaksLeft[i] = root;
 				}else if(peaksLeft[i] > 4){
@@ -72,7 +83,12 @@ public class Circularity extends Effect{
 					);
 			
 			if(context.stereo_r[i+1].re > 1) {
-				root = scale*(Math.log(context.stereo_r[i+1].re))/logNum;
+				if(scaling == true) {
+					root = scale*context.stereo_r[i+1].re;
+				}else {
+					root = scale*(Math.log(context.stereo_r[i+1].re))/logNum;
+				}
+				
 				if(root > peaksRight[i]) {
 					peaksRight[i] = root;
 				}else if(peaksRight[i] > 4){
@@ -107,6 +123,12 @@ public class Circularity extends Effect{
 	
 	@Override
 	public void update(UpdateContext context) {
+		
+	}
+
+	@Override
+	public void render(RenderContext context) {
+		// TODO Auto-generated method stub
 		
 	}
 

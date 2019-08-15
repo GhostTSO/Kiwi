@@ -43,6 +43,10 @@ public class Engine {
 		source_thread;	
 	protected float
 		volume = 1f;
+	
+	protected boolean
+		scaling = false;
+	
 	protected long
 		fps,
 		tps;
@@ -209,7 +213,7 @@ public class Engine {
 			this.render_context.canvas_w = this.canvas.component.getWidth() ;
 			this.render_context.canvas_h = this.canvas.component.getHeight();
 			
-			this.effect.render(this.render_context);
+			this.effect.render(this.render_context, this.scaling);
 			
 			this.render_context.g2D.dispose();
 			this.buffer_strategy.show();
@@ -283,7 +287,8 @@ public class Engine {
 		protected java.awt.Menu
 			m1 = new Menu("Effect"),
 			m2 = new Menu("Source"),
-			m3 = new Menu("Volume");
+			m3 = new Menu("Volume"),
+			m4 = new Menu("Scaling");
 		
 		protected int
 			w,
@@ -301,6 +306,7 @@ public class Engine {
 			this.mb.add(m1);
 			this.mb.add(m2);
 			this.mb.add(m3);
+			this.mb.add(m4);
 			this.component.setMenuBar(this.mb);
 			this.component.add(this.parent.canvas.component);
 			
@@ -322,6 +328,7 @@ public class Engine {
 			this.m1.removeAll();
 			this.m2.removeAll();
 			this.m3.removeAll();
+			this.m4.removeAll();
 			
 			for(Effect effect: this.parent.effects) {
 				MenuItem mi = new MenuItem(effect.name);
@@ -353,6 +360,19 @@ public class Engine {
 					v = 100;
 				m3.add(mi);
 			}
+			
+			MenuItem lin = new MenuItem("Linear");
+			MenuItem log = new MenuItem("Logorithmic");
+			lin.addActionListener((ae) -> {
+				parent.scaling = true;
+			});
+			log.addActionListener((ae) -> {
+				parent.scaling = false;
+			});
+			
+			this.m4.add(lin);
+			this.m4.add(log);
+			
 			
 			int
 				w = this.w,

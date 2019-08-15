@@ -13,7 +13,7 @@ public class SideStereoWaveForm extends Effect{
 	}
 	
 	@Override
-	public void render(RenderContext context) {
+	public void render(RenderContext context, boolean scaling) {
 		context.g2D.setColor(Color.BLACK);
 		context.g2D.setStroke(new BasicStroke((context.canvas_w/Source.SAMPLES)+1));
 		context.g2D.fillRect(
@@ -26,11 +26,20 @@ public class SideStereoWaveForm extends Effect{
 		double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 		double root;
 		double logNum = Math.log(50);
-		double scale = context.canvas_h/3;
+		double scale;
+		if(scaling == true) {
+			scale = context.canvas_h/200;}
+			else {
+			scale = context.canvas_h/3;}
 		
 		for(int i = 0; i < Source.SAMPLES/4; i ++) {
 			if(context.stereo_l[i+3*Source.SAMPLES/4].re > 1) {
-			root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re)/logNum);
+				
+				if(scaling == true) {
+					root = scale*context.stereo_l[i+3*Source.SAMPLES/4].re;
+				}else {
+					root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4].re)/logNum);
+				}
 			}else {
 				root = 0;
 			}
@@ -42,7 +51,12 @@ public class SideStereoWaveForm extends Effect{
 					(int)(context.canvas_h/2-root)
 					);		
 			if(context.stereo_r[i+1].re > 1) {
-			root = scale*(Math.log(context.stereo_r[i+1].re)/logNum);
+				if(scaling == true) {
+					root = scale*context.stereo_r[i+1].re;
+				}else {
+					root = scale*(Math.log(context.stereo_r[i+1].re)/logNum);
+				}
+			
 			}else {
 				root = 0;
 			}
@@ -60,6 +74,12 @@ public class SideStereoWaveForm extends Effect{
 	
 	@Override
 	public void update(UpdateContext context) {
+		
+	}
+
+	@Override
+	public void render(RenderContext context) {
+		// TODO Auto-generated method stub
 		
 	}
 

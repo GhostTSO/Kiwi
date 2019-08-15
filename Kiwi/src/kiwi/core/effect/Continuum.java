@@ -43,6 +43,12 @@ public class Continuum extends Effect {
 
 	@Override
 	public void render(RenderContext context) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void render(RenderContext context, boolean scaling) {
 		
 		Graphics2D g2D = (Graphics2D)context.g2D.create();
 		
@@ -164,6 +170,12 @@ public class Continuum extends Effect {
 			
 			if(this.cur_frq != this.max_frq)
 				this.cur_frq += (this.max_frq - this.cur_frq) * FREQUENCY_VELOCITY;
+		}
+
+		@Override
+		public void render(RenderContext context, boolean scaling) {
+			// TODO Auto-generated method stub
+			
 		}		
 	}
 	
@@ -219,5 +231,7 @@ public class Continuum extends Effect {
 		RGBA_COMPOSITE = (model1, model2, hints) -> {
 			return RGBA_COMPOSITE_CONTEXT;
 		};
+
+	
 		
 }
