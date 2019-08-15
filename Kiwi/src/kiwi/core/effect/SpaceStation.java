@@ -4,8 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.RenderingHints;
 
-import kiwi.core.source.Source;
-
 public class SpaceStation extends Effect{
 	
 	
@@ -31,7 +29,6 @@ public class SpaceStation extends Effect{
 		
 
 		
-		double root;
 		double logNum = Math.log(50);
 		double wSpacing = (double)context.canvas_w/20;
 		double hSpacing = (double)context.canvas_w/20*Math.tan(45);
@@ -50,7 +47,7 @@ public class SpaceStation extends Effect{
 			average = 0;
 			for(int j = 0; j < 25; j++) {
 				if(scaling == true) {
-					root = context.stereo_l[(25*i)+j].re;
+					average += scale*context.stereo_l[(25*i)+j].re;
 				}else {
 					average += scale*(Math.log(context.stereo_l[(25*i)+j].re))/logNum;
 				}
@@ -89,7 +86,7 @@ public class SpaceStation extends Effect{
 			average = 0;
 			for(int j = 0; j < 25; j++) {
 				if(scaling == true) {
-					root = scale*context.stereo_r[(25*i)+j].re;
+					average += scale*context.stereo_r[(25*i)+j].re;
 				}else {
 					average += scale*(Math.log(context.stereo_r[(25*i)+j].re))/logNum;
 				}
