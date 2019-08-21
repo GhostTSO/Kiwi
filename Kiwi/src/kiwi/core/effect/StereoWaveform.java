@@ -12,7 +12,7 @@ public class StereoWaveform extends Effect {
 		}
 		
 		@Override
-		public void render(RenderContext context) {
+		public void render(RenderContext context, boolean scaling) {
 			context.g2D.setColor(Color.BLACK);
 			context.g2D.setStroke(new BasicStroke(2));
 			context.g2D.fillRect(
@@ -25,13 +25,22 @@ public class StereoWaveform extends Effect {
 			double canvasSpacing = (double)context.canvas_w/(Source.SAMPLES/2);
 			double root;
 			double logNum = Math.log(50);
-			double scale = context.canvas_h/8;
-				
+			double scale;
+			if(scaling == true) {
+				scale = 1;}
+				else {
+				scale = context.canvas_h/8;}
 			
 			for(int i = 0; i < Source.SAMPLES/2; i ++) {
 				
 				if(context.stereo_l[i+Source.SAMPLES/2].re > 1) {
-				root = Math.log(context.stereo_l[i+Source.SAMPLES/2].re)/logNum;
+					
+					if(scaling == true) {
+						root = scale*context.stereo_l[i+Source.SAMPLES/2].re;
+					}else {
+						root = Math.log(context.stereo_l[i+Source.SAMPLES/2].re)/logNum;
+					}
+				
 				}else {
 					root = 0;
 				}
@@ -45,7 +54,12 @@ public class StereoWaveform extends Effect {
 						);	
 				
 				if(context.stereo_r[i+Source.SAMPLES/2].re > 1) {
-					root = Math.log(context.stereo_r[i+Source.SAMPLES/2].re)/logNum;
+					if(scaling == true) {
+						root = scale*context.stereo_r[i+Source.SAMPLES/2].re;
+					}else {
+						root = Math.log(context.stereo_r[i+Source.SAMPLES/2].re)/logNum;
+					}
+					
 					}else {
 						root = 0;
 					}
@@ -61,6 +75,11 @@ public class StereoWaveform extends Effect {
 			}
 		}
 
+		
+		@Override
+		public void render(RenderContext context) {
+			
+		}
 		
 		@Override
 		public void update(UpdateContext context) {

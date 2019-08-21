@@ -1,5 +1,6 @@
 package kiwi.core;
 
+import kiwi.core.Renderable.RenderContext;
 import kiwi.math.Complex;
 
 public interface Updateable {
@@ -26,4 +27,6 @@ public interface Updateable {
 			this.mono = mono_channel;
 		}
 	}
+
+	void render(RenderContext context, boolean scaling);
 }
