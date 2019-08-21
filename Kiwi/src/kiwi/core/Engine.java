@@ -110,8 +110,7 @@ public class Engine {
 		this.effects = Effect.getAvailableEffects();
 		this.sources = Source.getAvailableSources();		
 		this.window.onInit();
-		this.canvas.onInit();
-			
+		this.canvas.onInit();			
 	}
 	
 	private final void onExit() {
