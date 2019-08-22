@@ -31,9 +31,7 @@ public class Engine {
 	public int
 		effect_fps = 60,
 		effect_tps = 60,
-		effect_sync = 0,
-		source_poll_rate = 60,
-		source_sync = 0;
+		source_poll_rate = 60;
 
 	protected Canvas
 		canvas = new Canvas(this);
@@ -42,10 +40,7 @@ public class Engine {
 	
 	protected Thread
 		effect_thread,
-		source_thread;
-	protected boolean
-		running_effect,
-		running_source;
+		source_thread;	
 	protected float
 		volume = 1f;
 	
@@ -106,15 +101,13 @@ public class Engine {
 	public void init() {		
 		this.effect_thread = new Thread(this.run_effect);
 		this.source_thread = new Thread(this.run_source);
-		running_effect = true;
-		running_source = true;
 		this.effect_thread.start();	
 		this.source_thread.start();
 	}
 	
 	public void exit() {		
-		running_effect = false;
-		running_source = false;
+		this.effect_thread.interrupt();
+		this.source_thread.interrupt();
 	}		
 	
 	public void onInit() {		
@@ -130,8 +123,7 @@ public class Engine {
 	}
 	
 	protected final long
-		one_millis = 1000000   ,
-		one_second = 1000000000;	
+		one_second = 1000000000L;	
 	protected final Runnable 
 		run_effect = () -> {
 			try {
@@ -145,7 +137,7 @@ public class Engine {
 					f_ct = 0,
 					t_ct = 0,
 					t = System.nanoTime();
-				while(running_effect) {
+				while(!Thread.interrupted()) {
 					long dt = - t + (t = System.nanoTime());
 					f_elapsed += dt;
 					t_elapsed += dt;
@@ -167,16 +159,6 @@ public class Engine {
 						f_ct = 0;
 						t_ct = 0;
 					}
-					try {
-						long sync = Math.min(
-								t_time - t_elapsed,
-								f_time - f_elapsed
-								) / one_millis;
-						if(sync > effect_sync)
-							Thread.sleep(sync);
-					} catch(InterruptedException ie) {
-						ie.printStackTrace();
-					}
 				}
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -190,18 +172,11 @@ public class Engine {
 					poll_time = source_poll_rate > 0 ? one_second / source_poll_rate : 0,
 					elapsed = 0,
 					t = System.nanoTime();
-					while(running_source) {
+					while(!Thread.interrupted()) {
 						elapsed -= t - (t = System.nanoTime());
 						if(elapsed >= poll_time) {
 							this.poll();
 							elapsed = 0;
-						}
-						try {
-							long sync = (poll_time - elapsed) / one_millis;
-							if(sync > effect_sync)
-								Thread.sleep(sync);
-						} catch(InterruptedException ie) {
-							ie.printStackTrace();
 						}
 					}
 			} catch(Exception e) {
