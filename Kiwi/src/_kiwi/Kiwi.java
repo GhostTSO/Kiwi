@@ -5,7 +5,7 @@ import kiwi.util.Version;
 
 public class Kiwi {
 	public static final Version
-		VERSION = new Version("Kiwi", 2, 0, 0);
+		VERSION = new Version("Kiwi", 2, 0, 1);
 	
 	public static void main(String[] args) {
 		System.out.println(VERSION);
