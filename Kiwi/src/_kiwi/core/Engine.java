@@ -54,55 +54,90 @@ public class Engine implements Renderable, Updateable, Runnable {
 		fps,
 		tps;
 	
+	/**
+	 * Constructor is private to guarantee only one {@link Engine#INSTANCE instance}
+	 */
 	private Engine() { }	
 	
+	/**
+	 * Static method to start thread
+	 */
 	public static void init() {
 		INSTANCE.thread = new Thread(INSTANCE);
 		INSTANCE.running = true;
 		INSTANCE.thread.start();
 	}
 	
+	/**
+	 * Static method to stop thread
+	 */
 	public static void exit() {
 		INSTANCE.running = false;
 	}
 	
+	/**
+	 * Called at the thread start
+	 */
 	public void onInit() {
 		window.onInit();
 		canvas.onInit();
 	}
 	
+	/**
+	 * Called at thread stop
+	 */
 	public void onExit() {
 		canvas.onExit();
 		window.onExit();
 	}
 	
+	/**
+	 * Create a {@link _kiwi.core.Renderable.RenderContext RenderContext} and render
+	 * @param t elapsed time in seconds
+	 * @param dt  delta time in seconds
+	 */
 	private void render(double t, double dt) {
 		canvas.render(this, t, dt);
 	}
 	
+	/**
+	 * Create a {@link _kiwi.core.Updateable.UpdateContext UpdateContext} and update
+	 * @param t elapsed time in seconds
+	 * @param dt  delta time in seconds
+	 */
 	private void update(double t, double dt) {
 		canvas.update(this, t, dt);
 	}
 	
 	@Override
+	/**
+	 * Render {@link _kiwi.core.effect.Effect effect}
+	 */
 	public void render(RenderContext context) {
 		if(effect != null)
 			effect.render(context);
 	}
 	
 	@Override
+	/**
+	 * Update {@link _kiwi.core.effect.Effect effect}
+	 */
 	public void update(UpdateContext context) {
+		//check source to rebuild channels
 		boolean push = false;
 		for(Source source: sources) {
 			source.update(context);
 			if(source.isPush())
 				push = true;
 		}
+		//if channels need to be rebuilt, rebuild them
 		if(push) {
+			//zero out channels
 			for(int i = 0; i < Source.SAMPLES; i ++) {
 				stereo_l[i] = 0.0;
 				stereo_r[i] = 0.0;
 			}
+			//fill channels
 			int n = 0;
 			for(Source source: sources)
 				if(source.isOpen()) {
@@ -117,11 +152,12 @@ public class Engine implements Renderable, Updateable, Runnable {
 				stereo_r[i] = stereo_r[i] * volume / n;
 				mono[i]     = (long)(stereo_l[i] + stereo_r[i]) / 2;
 			}
-			
+			//apply fourier transform
 			Util.fft(stereo_l);
 			Util.fft(stereo_r);
 			Util.fft(mono);
 		}
+		//update effect
 		if(effect != null)
 			effect.update(context);
 	}
@@ -131,12 +167,16 @@ public class Engine implements Renderable, Updateable, Runnable {
 		ONE_SECOND = 1000000000;
 
 	@Override
+	/**
+	 * Application loop
+	 */
 	public void run() {
 		try {
+			//init
 			onInit();
 			long
-				f_time = THREAD_FPS > 0 ? ONE_SECOND / THREAD_FPS : 0,
-				t_time = THREAD_TPS > 0 ? ONE_SECOND / THREAD_TPS : 0,
+				f_time = THREAD_FPS > 0 ? ONE_SECOND / THREAD_FPS : 0, // time per render in nanoseconds
+				t_time = THREAD_TPS > 0 ? ONE_SECOND / THREAD_TPS : 0, // time per update in nanoseconds
 				f_elapsed = 0,
 				t_elapsed = 0,
 				elapsed = 0,
@@ -148,16 +188,19 @@ public class Engine implements Renderable, Updateable, Runnable {
 					f_elapsed += dt;
 					t_elapsed += dt;
 					elapsed += dt;
+					//if time to update, then update
 					if(t_elapsed >= t_time) {
 						update((double)t / ONE_SECOND, (double)t_elapsed / ONE_SECOND);
 						t_elapsed -= t_time;
 						t_ct ++;
 					}
+					//if time to render, then render
 					if(f_elapsed >= f_time) {
 						render((double)t / ONE_SECOND, (double)f_elapsed / ONE_SECOND);
 						f_elapsed -= f_time;
 						f_ct ++;
-					}					
+					}	
+					//if elapsed time > 1 second, cache and reset counters
 					if(elapsed >= ONE_SECOND) {
 						System.out.println("FPS: " + f_ct);
 						System.out.println("TPS: " + t_ct);
@@ -167,16 +210,19 @@ public class Engine implements Renderable, Updateable, Runnable {
 						f_ct = 0;
 						t_ct = 0;
 					}
+					//how much time to next cycle
 					long sync = Math.min(
 							t_time - t_elapsed,
 							f_time - f_elapsed
 							) / ONE_MILLIS;
+					//sleep until next cycle
 					if(sync > THREAD_SYNC)
 						Thread.sleep(sync);
 				}
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		} finally {
+			//exit
 			onExit();
 		}
 	}
