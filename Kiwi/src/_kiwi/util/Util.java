@@ -7,6 +7,31 @@ public class Util {
 		FULLSCREEN_W = Toolkit.getDefaultToolkit().getScreenSize().width ,
 		FULLSCREEN_H = Toolkit.getDefaultToolkit().getScreenSize().height;	
 	
+	public static final double[] lerp(double[] a, double[] b, double t) {
+		int 
+			n = Math.min(
+					a.length,
+					b.length
+					);
+		double[] 
+				lerp = new double[n];
+		for(int i = 0; i < n; i ++)
+			lerp[i] = (b[i] - a[i]) * t + a[i];
+		return lerp;
+	}
+	
+	public static final double clamp(double x) {
+		return clamp(x, 0, 1);
+	}
+	
+	public static final double clamp(double x, double a, double b) {
+		if(x < a)
+			x = a;
+		if(x > b)
+			x = b;
+		return x;
+	}
+	
 	public static final double map(double x, double a, double b) {
 		return (x - a) / (b - a);
 	}

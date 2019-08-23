@@ -70,7 +70,6 @@ public class Effect implements Renderable, Updateable {
 	public static final List<Effect> getAvailableEffects() {
 		LinkedList<Effect> effects = new LinkedList<>();
 		effects.add(new StereoWaveform());
-		effects.add(new Continuum());
 		return effects;
 	}
 }
