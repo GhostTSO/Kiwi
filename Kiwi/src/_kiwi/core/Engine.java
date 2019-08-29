@@ -16,10 +16,15 @@ import _kiwi.core.source.Source;
 import _kiwi.util.Util;
 
 public class Engine implements Renderable, Updateable, Runnable {
+	//engine constructor
 	public static final Engine
 		INSTANCE = new Engine();
+	
+	//version string
 	public static final String
 		WINDOW_TITLE = "" + Kiwi.VERSION;
+	
+	//window settings
 	public static final int
 		WINDOW_W = 640,
 		WINDOW_H = 480,
@@ -27,29 +32,45 @@ public class Engine implements Renderable, Updateable, Runnable {
 		THREAD_TPS = 60,
 		THREAD_SYNC = 0;
 	
+	//memory space for sound data
 	protected final double[]
 		stereo_l = new double[Source.SAMPLES],
 		stereo_r = new double[Source.SAMPLES],
 		mono	 = new double[Source.SAMPLES];	
 	
+	//initialize and fetch list of effects
 	protected List<Effect>
 		effects = Effect.getAvailableEffects();
+	
+	//finds and makes a list of readable audio sources
 	protected List<Source>
 		sources = Source.getAvailableSources();	
+	
+	//initialize canvas
 	protected final Canvas
 		canvas = new Canvas(this);
+	
+	//initialize window
 	protected final Window
 		window = new Window(this);	
+	
+	//volume scaling
 	protected double 
 		volume = 1f;
+	
+	//current effect holder
 	protected Effect
 		effect;
 	
+	//program thread
 	protected Thread
 		thread;
+	
+	//program running state
 	protected boolean
 		running;
 	
+	//counters
 	protected long
 		fps,
 		tps;
@@ -111,7 +132,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 	
 	@Override
 	/**
-	 * Render {@link _kiwi.core.effect.Effect effect}
+	 * Render to the canvas the appropriate effect{@link _kiwi.core.effect.Effect effect}
 	 */
 	public void render(RenderContext context) {
 		if(effect != null)
@@ -120,7 +141,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 	
 	@Override
 	/**
-	 * Update {@link _kiwi.core.effect.Effect effect}
+	 * Update sounds information into the buffers{@link _kiwi.core.effect.Effect effect}
 	 */
 	public void update(UpdateContext context) {
 		//check source to rebuild channels
@@ -162,6 +183,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 			effect.update(context);
 	}
 	
+	//time sizes
 	private static final long
 		ONE_MILLIS = 1000000   ,
 		ONE_SECOND = 1000000000;
@@ -175,15 +197,18 @@ public class Engine implements Renderable, Updateable, Runnable {
 			//init
 			onInit();
 			long
-				f_time = THREAD_FPS > 0 ? ONE_SECOND / THREAD_FPS : 0, // time per render in nanoseconds
-				t_time = THREAD_TPS > 0 ? ONE_SECOND / THREAD_TPS : 0, // time per update in nanoseconds
-				f_elapsed = 0,
-				t_elapsed = 0,
-				elapsed = 0,
-				f_ct = 0,
-				t_ct = 0,
-				t = System.nanoTime();
+				f_time = THREAD_FPS > 0 ? ONE_SECOND / THREAD_FPS : 0, 	// time per render in nanoseconds
+				t_time = THREAD_TPS > 0 ? ONE_SECOND / THREAD_TPS : 0, 	// time per update in nanoseconds
+				f_elapsed = 0, 											//default value
+				t_elapsed = 0, 											//default value
+				elapsed = 0, 											//default value
+				f_ct = 0, 												//default value
+				t_ct = 0, 												//default value
+				t = System.nanoTime();									//current system time in nanoseconds
+				
+				//while running boolean is true
 				while(running) {
+					//calculates change in time and increments tick and frame counter
 					long dt = - t + (t = System.nanoTime());
 					f_elapsed += dt;
 					t_elapsed += dt;
@@ -228,16 +253,24 @@ public class Engine implements Renderable, Updateable, Runnable {
 	}
 	
 	public static class Canvas {
+		
+		//initialize drawing canvas
 		protected final java.awt.Canvas
 			component = new java.awt.Canvas();
+		
+		//initialize render context
 		protected RenderContext
 			render_context = new RenderContext();
+		
+		//initialize update context
 		protected UpdateContext
 			update_context = new UpdateContext();
 		
+		//stored engine variable
 		protected Engine
 			parent;
 		
+		/**canvas constructor**/
 		public Canvas(Engine parent) {
 			this.parent = parent;
 			this.render_context.stereo_l = parent.stereo_l;
@@ -248,10 +281,13 @@ public class Engine implements Renderable, Updateable, Runnable {
 			this.update_context.mono     = parent.mono;
 		}
 		
+		/**initialize method**/
 		public void onInit() { }
 		
+		/**close method**/
 		public void onExit() { }
 		
+		//buffered storage variable
 		private BufferStrategy
 			b;
 		
