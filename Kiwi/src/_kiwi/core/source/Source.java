@@ -15,7 +15,7 @@ import _kiwi.core.Updateable;
 
 public class Source implements Updateable {
 	public static final int
-		SAMPLERATE 	=  44100,
+		SAMPLERATE 	=  40000,
 		SAMPLES     =  1024;
 	public static final AudioFormat
 		FORMAT = new AudioFormat(
