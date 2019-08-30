@@ -5,55 +5,43 @@ import java.awt.Toolkit;
 public class Util {
 	public static final int
 		FULLSCREEN_W = Toolkit.getDefaultToolkit().getScreenSize().width ,
-		FULLSCREEN_H = Toolkit.getDefaultToolkit().getScreenSize().height;	
+		FULLSCREEN_H = Toolkit.getDefaultToolkit().getScreenSize().height;
 	
-	public static final double[] lerp(double[] a, double[] b, double t) {
-		int 
-			n = Math.min(
-					a.length,
-					b.length
-					);
-		double[] 
-				lerp = new double[n];
-		for(int i = 0; i < n; i ++)
-			lerp[i] = (b[i] - a[i]) * t + a[i];
-		return lerp;
+	public static enum Hint {
+		LIN, LOG, TANH
 	}
 	
-	public static final double clamp(double x) {
-		return clamp(x, 0, 1);
+	public static double map(Hint hint, double val, double min, double max, double ramp) {
+		switch(hint) {
+			case LIN:  return map     (val, min, max   );
+			case LOG:  return map_loge(val, min, max, ramp);
+			case TANH: return map_tanh(val, min, max, ramp);
+		}
+		return val;
 	}
 	
-	public static final double clamp(double x, double a, double b) {
-		if(x < a)
-			x = a;
-		if(x > b)
-			x = b;
-		return x;
+	public static final double map(double val, double min, double max) {
+		return (val - min) / (max - min);
 	}
 	
-	public static final double map(double x, double a, double b) {
-		return (x - a) / (b - a);
+	public static final double map(double val, double min1, double max1, double min2, double max2) {
+		return Util.map(val, min1, max1) * (max2 - min2) + min2;
 	}
 	
-	public static final double map(double x, double a, double b, double c, double d) {
-		return Util.map(x, a, b) * (d - c) + c;
+	public static final double map_tanh(double val, double min, double max, double ramp) {
+		return Math.tanh((val - min) /(max - min) * ramp);
 	}
 	
-	public static final double map_tanh(double x, double a, double b, double r) {
-		return Math.tanh((x - a) /(b - a) * r);
+	public static final double map_tanh(double val, double min1, double max1, double min2, double max2, double ramp) {
+		return Util.map_tanh(val, min1, max1, ramp) * (max2 - min2) + min2;
 	}
 	
-	public static final double map_tanh(double x, double a, double b, double c, double d, double r) {
-		return Util.map_tanh(x, a, b, r) * (d - c) + c;
+	public static final double map_loge(double val, double min, double max, double ramp) {
+		return 1f / (1f + Math.exp(- (val - min) / (max - min) * ramp)) * 2f - 1f;
 	}
 	
-	public static final double map_loge(double x, double a, double b, double e) {
-		return 1f / (1f + Math.exp(- (x - a) / (b - a) * e)) * 2f - 1f;
-	}
-	
-	public static final double map_loge(double x, double a, double b, double c, double d, double e) {
-		return Util.map_loge(x, a, b, e) * (d - c) + c;
+	public static final double map_loge(double val, double min1, double max1, double min2, double max2, double ramp) {
+		return Util.map_loge(val, min1, max1, ramp) * (max2 - min2) + min2;
 	}
 	
 	public static final double log(double x, double e) {
@@ -76,6 +64,38 @@ public class Util {
 		return max;
 	}
 	
+	public static final double clamp(double val) {
+		return clamp(val, 0, 1);
+	}
+	
+	public static final double clamp(double val, double min, double max) {
+		if(val < min)
+			val = min;
+		if(val > max)
+			val = max;
+		return val;
+	}
+	
+	public static final double[] lerp(double[] a, double[] b, double t) {
+		int 
+			n = Math.min(
+					a.length,
+					b.length
+					);
+		double[] 
+				lerp = new double[n];
+		for(int i = 0; i < n; i ++)
+			lerp[i] = (b[i] - a[i]) * t + a[i];
+		return lerp;
+	}
+	
+	/**
+	 * Hi Pass Filter<br>
+	 * Copies values from one array to a new array, zeroing any values lower than the threshold
+	 * @param x the signal array
+	 * @param t the signal threshold
+	 * @return the filtered signal
+	 */
 	public static final double[] hpf(double[] x, double t) {
 		double[] y = new double[x.length];
 		for(int i = 0; i < x.length; i ++)
@@ -83,6 +103,13 @@ public class Util {
 		return y;
 	}
 	
+	/**
+	 * Lo Pass Filter<br>
+	 * Copies values from one array to a new array, zeroing any values higher than the threshold
+	 * @param x the signal array
+	 * @param t the signal threshold
+	 * @return the filtered signal
+	 */
 	public static final double[] lpf(double[] x, double t) {
 		double[] y = new double[x.length];
 		for(int i = 0; i < x.length; i ++)
@@ -90,6 +117,10 @@ public class Util {
 		return y;
 	}
 	
+	/**
+	 * Fast Fourier Transform
+	 * @param x the signal array
+	 */
 	public static final void fft(double[] x) {
 		Complex[] y = new Complex[x.length];
 		for(int i = 0; i < x.length; i ++)
@@ -102,6 +133,10 @@ public class Util {
 		}
 	}
 	
+	/**
+	 * Fast Fourier Transform
+	 * @param x the signal array
+	 */
 	public static final void fft(Complex[] x) {
 		int n = x.length;
 

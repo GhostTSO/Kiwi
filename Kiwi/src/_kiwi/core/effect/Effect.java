@@ -9,6 +9,8 @@ import _kiwi.core.Updateable;
 
 public class Effect implements Renderable, Updateable {
 	public static final Color
+		TRANSPARENT_BLACK = new Color(0f, 0f, 0f, 0f),
+		TRANSPARENT_WHITE = new Color(1f, 1f, 1f, 0f),
 		DEFAULT_BACKGROUND = Color.BLACK,
 		DEFAULT_FOREGROUND = Color.WHITE;
 	public final String
@@ -69,8 +71,8 @@ public class Effect implements Renderable, Updateable {
 	
 	public static final List<Effect> getAvailableEffects() {
 		LinkedList<Effect> effects = new LinkedList<>();
-		effects.add(new StereoWaveform());
-		effects.add(new Circularity());
+		effects.add(new _kiwi.core.effect.effects.StereoWaveform());
+		effects.add(new _kiwi.core.effect.effects.Circularity());
 		return effects;
 	}
 }
