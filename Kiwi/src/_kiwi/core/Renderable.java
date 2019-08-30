@@ -9,9 +9,6 @@ public interface Renderable {
 	public void render(RenderContext context);
 	
 	public static class RenderContext implements Copyable<RenderContext> {
-		public static enum Scaling {
-			LIN, LOG
-		}
 		public Graphics2D
 			g2D;
 		public int

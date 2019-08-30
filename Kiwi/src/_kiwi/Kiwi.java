@@ -1,6 +1,8 @@
 package _kiwi;
 
-import _kiwi.core.Engine;
+import java.util.Arrays;
+
+import _kiwi.util.Util;
 import kiwi.util.Version;
 
 public class Kiwi {
@@ -9,6 +11,15 @@ public class Kiwi {
 	
 	public static void main(String[] args) {
 		System.out.println(VERSION);
-		Engine.init();		
+		
+		double[]
+			a = { 1},
+			b = {10};	
+		
+		System.out.println(Arrays.toString(Util.lerp(a, b, .5)));
+		
+		
+		
+		//Engine.init();		
 	}
 }
