@@ -52,13 +52,13 @@ public class Circularity extends Effect {
 
 
 
-	//contstructor
+	//constructor
 	public Circularity() {
 		super("Circularity");
 		colorSpeed1 = Math.random()*.5;
 		colorSpeed2 = Math.random()*.8;
 		colorSpeed3 = Math.random()*.25;
-		
+
 		colorCounter1 = Math.random() * 200;
 		colorCounter2 = Math.random() * 200;
 		colorCounter3 = Math.random() * 200;
@@ -71,11 +71,45 @@ public class Circularity extends Effect {
 		//create a render path to make the shape
 		GeneralPath circle = new GeneralPath();
 
-		//set speed of movement based on canvas size
-		speed = context.canvas_h/100;
 
 		//toggle antialising
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+
+		//create our colors
+		Color color1 = new Color((int)colorCounter3, (int)(255-colorCounter2), (int)colorCounter1);
+		Color color2 = new Color((int)colorCounter2,(int)(colorCounter3), (int)255);
+		Color color3 = new Color(255,(int)(255-colorCounter1), (int)colorCounter3);
+		Color color4 = new Color((int)(255-colorCounter1),255, (int)(255-colorCounter3));
+
+
+		//color gradient for the background
+		GradientPaint gp4 = new GradientPaint(0, 0, 
+				color4, context.canvas_w, context.canvas_h, color3, true);
+		context.g2D.setPaint(gp4);
+		context.g2D.fillRect(0, 0, context.canvas_w, context.canvas_h);
+
+		//color gradient for circle
+		gp4 = new GradientPaint(0, 0, 
+				color1, context.canvas_w/5, context.canvas_h, color2, true);
+		context.g2D.setPaint(gp4);
+
+		//begin drawing the shape
+		circle.moveTo(points[0][0], points[1][0]);		
+
+		//draw the rest of the points
+		for (int k = 1; k < 509; k++) 
+			circle.lineTo(points[0][k], points[1][k]);
+
+		//finish the shape
+		circle.closePath();
+		context.g2D.fill(circle);
+	}
+
+	public void onUpdate(UpdateContext context) {
+
+		//set speed of movement based on canvas size
+		speed = context.canvas_h/100;
 
 		//set scale value based on height
 		scale = context.canvas_h/divider;
@@ -181,34 +215,5 @@ public class Circularity extends Effect {
 		colorCounter1 +=colorSpeed1;
 		colorCounter2 += colorSpeed2;
 		colorCounter3 += colorSpeed3;
-
-		//create our colors
-		Color color1 = new Color((int)colorCounter3, (int)(255-colorCounter2), (int)colorCounter1);
-		Color color2 = new Color((int)colorCounter2,(int)(colorCounter3), (int)255);
-		Color color3 = new Color(255,(int)(255-colorCounter1), (int)colorCounter3);
-		Color color4 = new Color((int)(255-colorCounter1),255, (int)(255-colorCounter3));
-		
-		
-		//color gradient for the background
-		GradientPaint gp4 = new GradientPaint(0, 0, 
-				color4, context.canvas_w, context.canvas_h, color3, true);
-		context.g2D.setPaint(gp4);
-		context.g2D.fillRect(0, 0, context.canvas_w, context.canvas_h);
-		
-		//color gradient for circle
-		gp4 = new GradientPaint(0, 0, 
-				color1, context.canvas_w/5, context.canvas_h, color2, true);
-		context.g2D.setPaint(gp4);
-		
-		//begin drawing the shape
-		circle.moveTo(points[0][0], points[1][0]);		
-
-		//draw the rest of the points
-		for (int k = 1; k < 509; k++) 
-			circle.lineTo(points[0][k], points[1][k]);
-
-		//finish the shape
-		circle.closePath();
-		context.g2D.fill(circle);
 	}
 }
