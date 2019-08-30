@@ -69,8 +69,8 @@ public class Effect implements Renderable, Updateable {
 	
 	public static final List<Effect> getAvailableEffects() {
 		LinkedList<Effect> effects = new LinkedList<>();
-		effects.add(new StereoWaveform());
-		effects.add(new Circularity());
+		effects.add(new _kiwi.core.effect.effects.StereoWaveform());
+		effects.add(new _kiwi.core.effect.effects.Circularity());
 		return effects;
 	}
 }

@@ -1,10 +1,11 @@
-package _kiwi.core.effect;
+package _kiwi.core.effect.effects;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
 
+import _kiwi.core.effect.Effect;
 import _kiwi.core.source.Source;
 
 public class Circularity extends Effect {

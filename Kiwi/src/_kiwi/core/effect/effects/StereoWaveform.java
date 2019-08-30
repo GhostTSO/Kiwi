@@ -1,7 +1,8 @@
-package _kiwi.core.effect;
+package _kiwi.core.effect.effects;
 
 import java.awt.Color;
 
+import _kiwi.core.effect.Effect;
 import _kiwi.core.source.Source;
 import _kiwi.util.Util;
 
