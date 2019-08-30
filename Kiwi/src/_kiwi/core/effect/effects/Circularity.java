@@ -47,15 +47,22 @@ public class Circularity extends Effect {
 	double colorCounter3 = 20;
 
 	//Variable to flip to control color speed
-	double colorSpeed1 = .5;
-	double colorSpeed2 = .2;
-	double colorSpeed3 = .3;
+	double colorSpeed1;
+	double colorSpeed2;
+	double colorSpeed3;
 
 
 
 	//contstructor
 	public Circularity() {
 		super("Circularity");
+		colorSpeed1 = Math.random()*.5;
+		colorSpeed2 = Math.random()*.8;
+		colorSpeed3 = Math.random()*.25;
+		
+		colorCounter1 = Math.random() * 200;
+		colorCounter2 = Math.random() * 200;
+		colorCounter3 = Math.random() * 200;
 	}
 
 	//operations needed to render the effect visually
@@ -185,13 +192,13 @@ public class Circularity extends Effect {
 		
 		//color gradient for the background
 		GradientPaint gp4 = new GradientPaint(0, 0, 
-				color4, context.canvas_w/12, context.canvas_h, color3, true);
+				color4, context.canvas_w, context.canvas_h, color3, true);
 		context.g2D.setPaint(gp4);
 		context.g2D.fillRect(0, 0, context.canvas_w, context.canvas_h);
 		
 		//color gradient for circle
 		gp4 = new GradientPaint(0, 0, 
-				color1, context.canvas_w/12, context.canvas_h, color2, true);
+				color1, context.canvas_w/5, context.canvas_h, color2, true);
 		context.g2D.setPaint(gp4);
 		
 		//begin drawing the shape
