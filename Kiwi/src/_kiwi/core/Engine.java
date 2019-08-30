@@ -103,12 +103,16 @@ public class Engine implements Renderable, Updateable, Runnable {
 	public void onInit() {
 		window.onInit();
 		canvas.onInit();
+		if(effect != null)
+			effect.onInit();
 	}
 	
 	/**
 	 * Called at thread stop
 	 */
 	public void onExit() {
+		if(effect != null)
+			effect.onExit();
 		canvas.onExit();
 		window.onExit();
 	}
@@ -354,7 +358,11 @@ public class Engine implements Renderable, Updateable, Runnable {
 			for(Effect effect: parent.effects) {
 				MenuItem mi = new MenuItem(effect.name);
 				mi.addActionListener((ae) -> {
+					if(parent.effect != null)
+						parent.effect.onDetach();
 					parent.effect = effect;
+					if(parent.effect != null)
+						parent.effect.onAttach();
 				});
 				m1.add(mi);
 			}
