@@ -14,6 +14,7 @@ import _kiwi.Kiwi;
 import _kiwi.core.effect.Effect;
 import _kiwi.core.source.Source;
 import _kiwi.util.Util;
+import _kiwi.util.Util.Hint;
 
 public class Engine implements Renderable, Updateable, Runnable {
 	//engine constructor
@@ -327,7 +328,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 		protected java.awt.Menu
 			m1 = new Menu("Effect"),
 			m2 = new Menu("Source"),
-			m3 = new Menu("Volume");
+			m3 = new Menu("Volume"),
+			m4 = new Menu("Scaling");
 		protected Engine
 			parent;
 		
@@ -336,6 +338,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 			mb.add(m1);
 			mb.add(m2);
 			mb.add(m3);
+			mb.add(m4);
 			component.setMenuBar(mb);
 			component.add(parent.canvas.component);
 			component.addWindowListener(new WindowAdapter() {
@@ -377,7 +380,28 @@ public class Engine implements Renderable, Updateable, Runnable {
 				if(i >= 200)
 					di = 100;
 				m3.add(mi);
-			}			
+			}
+			
+			MenuItem
+				m41 = new MenuItem("Lin"),
+				m42 = new MenuItem("Log"),
+				m43 = new MenuItem("Tanh");
+			m41.addActionListener((ae) -> {
+				parent.canvas.render_context.hint = Hint.LIN;
+				parent.canvas.update_context.hint = Hint.LIN;
+			});
+			m42.addActionListener((ae) -> {
+				parent.canvas.render_context.hint = Hint.LOG;
+				parent.canvas.update_context.hint = Hint.LOG;		
+			});
+			m43.addActionListener((ae) -> {
+				parent.canvas.render_context.hint = Hint.TANH;
+				parent.canvas.update_context.hint = Hint.TANH;
+			});
+			
+			m4.add(m41);
+			m4.add(m42);
+			m4.add(m43);
 			
 			component.setTitle(WINDOW_TITLE);
 			component.setSize(

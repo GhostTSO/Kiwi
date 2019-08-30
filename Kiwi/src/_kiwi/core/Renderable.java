@@ -2,12 +2,16 @@ package _kiwi.core;
 
 import java.awt.Graphics2D;
 
+import _kiwi.util.Util.Hint;
 import kiwi.util.Copyable;
 
 public interface Renderable {
 	public void render(RenderContext context);
 	
 	public static class RenderContext implements Copyable<RenderContext> {
+		public static enum Scaling {
+			LIN, LOG
+		}
 		public Graphics2D
 			g2D;
 		public int
@@ -19,6 +23,8 @@ public interface Renderable {
 			mono;
 		public double
 			t, dt;
+		public Hint
+			hint = Hint.LIN;
 		
 		private RenderContext
 			parent;
@@ -46,6 +52,7 @@ public interface Renderable {
 			copy.stereo_l = this.stereo_l;
 			copy.stereo_r = this.stereo_r;
 			copy.mono = this.mono;
+			copy.hint = this.hint;
 			copy.t  = this.t ;
 			copy.dt = this.dt;
 			return copy;

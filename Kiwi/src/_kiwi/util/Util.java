@@ -5,7 +5,21 @@ import java.awt.Toolkit;
 public class Util {
 	public static final int
 		FULLSCREEN_W = Toolkit.getDefaultToolkit().getScreenSize().width ,
-		FULLSCREEN_H = Toolkit.getDefaultToolkit().getScreenSize().height;	
+		FULLSCREEN_H = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+	
+	public static enum Hint {
+		LIN, LOG, TANH
+	}
+	
+	public static double map(Hint hint, double x, double a, double b, double e) {
+		switch(hint) {
+			case LIN:  return map     (x, a, b   );
+			case LOG:  return map_loge(x, a, b, e);
+			case TANH: return map_tanh(x, a, b, e);
+		}
+		return x;
+	}
 	
 	public static final double[] lerp(double[] a, double[] b, double t) {
 		int 
