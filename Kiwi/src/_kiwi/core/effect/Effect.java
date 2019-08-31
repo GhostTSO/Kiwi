@@ -73,6 +73,7 @@ public class Effect implements Renderable, Updateable {
 		LinkedList<Effect> effects = new LinkedList<>();
 		effects.add(new _kiwi.core.effect.effects.StereoWaveform());
 		effects.add(new _kiwi.core.effect.effects.Circularity());
+		effects.add(new _kiwi.core.effect.effects.RainDrops());
 		return effects;
 	}
 }
