@@ -60,9 +60,6 @@ public class Horizon extends Effect {
 	public Horizon() {
 		super("Horizon");
 		
-		//set background to a small amount of alpha
-		background = new Color(0f, 0f, 0f, .8f);
-		
 		//load background image
 		try {
 			backgroundImage = ImageIO.read(new File(".\\bin\\_kiwi\\core\\effect\\effects\\resources\\HorizonBackground.png"));
@@ -79,34 +76,23 @@ public class Horizon extends Effect {
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		//create a render path to make the shape
-		GeneralPath upper = new GeneralPath();
-		GeneralPath lower = new GeneralPath();
+		GeneralPath shape= new GeneralPath();
 
 		//sets paint to the appropriate image and size
 		back = new TexturePaint(backgroundImage, new Rectangle(0,0, context.canvas_w, context.canvas_h));
 		context.g2D.setPaint(back);
 
 		//begin drawing the shape
-		upper.moveTo(points[0][0], points[1][0]+context.canvas_h/2);		
-		lower.moveTo(points[0][0], points[1][0]+context.canvas_h/2);	
+		shape.moveTo(points[0][0], points[1][0]+context.canvas_h/2);	
 
 		//draw the rest of the points
-		for (int k = 1; k < 254; k++) {
-			upper.lineTo(points[0][k], points[1][k]+context.canvas_h/2);
-			lower.lineTo(points[0][509-k], points[1][509-k]+context.canvas_h/2);
-		}
-		
-		//add in points to make a complete shape to make a clean image composition
-		for(int k = 10; k >= 0; k--) {
-			upper.lineTo(k*context.canvas_w/10, context.canvas_h/2+2);
-			lower.lineTo(k*context.canvas_w/10, context.canvas_h/2-2);
+		for (int k = 1; k < 510; k++) {
+			shape.lineTo(points[0][k], points[1][k]+context.canvas_h/2);
 		}
 		
 		//finish the shape
-		upper.closePath();
-		lower.closePath();
-		context.g2D.fill(upper);
-		context.g2D.fill(lower);
+		shape.closePath();
+		context.g2D.fill(shape);
 	}
 
 	public void onUpdate(UpdateContext context) {
@@ -180,9 +166,9 @@ public class Horizon extends Effect {
 
 			//store the points into the point array to be rendered later
 			points[0][i] = (int)topXValue;
-			points[1][i] = (int)topYValue;
+			points[1][i] = (int)topYValue-2;
 			points[0][509-i] = (int)botXValue;
-			points[1][509-i] = (int)botYValue;
+			points[1][509-i] = (int)botYValue+2;
 		}						
 	}
 }
