@@ -29,9 +29,6 @@ public class Circularity extends Effect {
 	//points storage to draw the shape
 	double points[][] = new double[2][510];
 
-	//diameter of the circle
-	int circleWidth;
-
 	//speed that the circle collapses
 	double speed;
 
@@ -111,9 +108,6 @@ public class Circularity extends Effect {
 		
 		//set scale value based on height
 				scale = context.canvas_h/divider;
-
-				//setting the circle width
-				circleWidth = context.canvas_h/50;
 
 				//for loop to go through 1/4 of the samples
 				for(int i = 0; i < Source.SAMPLES/4; i ++) {
