@@ -75,6 +75,7 @@ public class Effect implements Renderable, Updateable {
 		effects.add(new _kiwi.core.effect.effects.Circularity());
 		effects.add(new _kiwi.core.effect.effects.RainDrops());
 		effects.add(new _kiwi.core.effect.effects.Horizon());
+		effects.add(new _kiwi.core.effect.effects.Oscilloscope());
 		return effects;
 	}
 }

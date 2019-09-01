@@ -1,6 +1,5 @@
 package _kiwi.core.effect.effects;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.TexturePaint;
