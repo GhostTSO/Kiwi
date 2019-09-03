@@ -7,34 +7,19 @@ import _kiwi.util.Util;
 
 public class Oscilloscope extends Effect {
 
-	int[] pointsVert = new int[480];
-	int[] pointsHor = new int[480];
+	int[] pointsVert = new int[600];
+	int[] pointsHor = new int[600];
 	int counter = 0;
 	
 	public Oscilloscope() {
 		super("Oscilloscope");
 		// TODO Auto-generated constructor stub
 		background = new Color(0f,0f,0f,.01f);
+		
 	}
 
 	
 	public void render(RenderContext context) {
-		
-		double horizontalVector = 0;
-		double verticalVector = 0;
-		
-		for(int i = 0; i < 1024; i++) {
-			horizontalVector += context.stereo_l[i];
-			verticalVector += context.stereo_r[i];
-		}
-		
-		verticalVector = Util.map(verticalVector, 0, 25000, 0, context.canvas_h);
-		horizontalVector = Util.map(horizontalVector, 0, 25000, 0, context.canvas_w);
-		
-		//System.out.println(verticalVector);
-		
-		pointsVert[counter] = (int)verticalVector;
-		pointsHor[counter] = (int)horizontalVector;
 		
 		Color myColor = new Color(0,0,0,.1f);
 		context.g2D.setColor(myColor);
@@ -64,11 +49,28 @@ public class Oscilloscope extends Effect {
 		
 		context.g2D.drawLine(pointsHor[pointsHor.length-1]-5, context.canvas_h-5, pointsHor[pointsHor.length-1]-5,context.canvas_h-5);
 		
+	}
+	
+	public void onUpdate(UpdateContext context) {
+		double horizontalVector = 0;
+		double verticalVector = 0;
+		
+		for(int i = 0; i < 1024; i++) {
+			horizontalVector += context.stereo_l[i];
+			verticalVector += context.stereo_r[i];
+		}
+		
+		verticalVector = Util.map(verticalVector, 0, 25000, 0, context.canvas_h);
+		horizontalVector = Util.map(horizontalVector, 0, 25000, 0, context.canvas_w);
+		
+		//System.out.println(verticalVector);
+		
+		pointsVert[counter] = (int)verticalVector;
+		pointsHor[counter] = (int)horizontalVector;
 		
 		counter++;
 		if(counter >= pointsVert.length)
 			counter = 0;
-		
 	}
 	
 }

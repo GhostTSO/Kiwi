@@ -42,16 +42,6 @@ public class Horizon extends Effect {
 	int lastBotX;
 	int lastBotY;
 
-	//variable to store color state
-	double colorCounter1 = 120;
-	double colorCounter2 = 60;
-	double colorCounter3 = 20;
-
-	//Variable to flip to control color speed
-	double colorSpeed1;
-	double colorSpeed2;
-	double colorSpeed3;
-
 	BufferedImage backgroundImage; 
 	TexturePaint back;
 
