@@ -1,5 +1,6 @@
 package _kiwi.core.effect.effects;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.TexturePaint;
@@ -7,6 +8,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -16,8 +18,8 @@ import _kiwi.core.source.Source;
 public class Horizon extends Effect {
 
 	//store recent high values for right and lefts
-	double[] peaksLeft = new double[Source.SAMPLES/4];
-	double[] peaksRight = new double[Source.SAMPLES/4];
+	double[] peaksLeft = new double[510];
+	double[] peaksRight = new double[510];
 
 	//values necessary for scaling
 	double root; //actual value
@@ -43,7 +45,7 @@ public class Horizon extends Effect {
 	int lastBotY;
 
 	BufferedImage backgroundImage; 
-	TexturePaint back;
+//	TexturePaint back;
 
 	//constructor
 	public Horizon() {
@@ -52,6 +54,7 @@ public class Horizon extends Effect {
 		//load background image
 		try {
 			backgroundImage = ImageIO.read(new File(".\\bin\\_kiwi\\core\\effect\\effects\\resources\\HorizonBackground.png"));
+//			back = new TexturePaint(backgroundImage, new Rectangle(0,0, 1920, 1080));
 		}catch(IOException ex) {
 			System.out.println("Couldn't find file");
 		}
@@ -64,24 +67,43 @@ public class Horizon extends Effect {
 		//toggle antialising
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		//create a render path to make the shape
-		GeneralPath shape= new GeneralPath();
+		
+		//create a render path for the black areas of the image
+		GeneralPath top = new GeneralPath();
+		GeneralPath bottom = new GeneralPath();
+		
 
-		//sets paint to the appropriate image and size
-		back = new TexturePaint(backgroundImage, new Rectangle(0,0, context.canvas_w, context.canvas_h));
-		context.g2D.setPaint(back);
+		//draws background to the appropriate image and size
+		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
+		context.g2D.setColor(Color.BLACK);
 
 		//begin drawing the shape
-		shape.moveTo(points[0][0], points[1][0]+context.canvas_h/2);	
+		top.moveTo(points[0][0], points[1][0]);
+		bottom.moveTo(points[0][509], points[1][509]);
+		
 
 		//draw the rest of the points
-		for (int k = 1; k < 510; k++) {
-			shape.lineTo(points[0][k], points[1][k]+context.canvas_h/2);
+		for (int k = 1; k < 255; k++) {
+			top.lineTo(points[0][k], points[1][k]+context.canvas_h/2);
+			bottom.lineTo(points[0][509-k], points[1][509-k]+context.canvas_h/2);
+		
 		}
 		
+		
+		for(int i = 0; i < 10; i++) {
+			top.lineTo((10*context.canvas_w)/(10-i), 0);
+			bottom.lineTo((10*context.canvas_w)/(10-i), context.canvas_h);
+		}
+		
+		top.lineTo(0, 0);
+		bottom.lineTo(0, context.canvas_h);
+		
+		
 		//finish the shape
-		shape.closePath();
-		context.g2D.fill(shape);
+		top.closePath();
+		bottom.closePath();
+		context.g2D.fill(top);
+		context.g2D.fill(bottom);
 	}
 
 	public void onUpdate(UpdateContext context) {
@@ -93,7 +115,7 @@ public class Horizon extends Effect {
 		scale = context.canvas_h/divider;
 
 		//for loop to go through 1/4 of the samples
-		for(int i = 0; i < Source.SAMPLES/4; i ++) {
+		for(int i = 0; i < 255; i ++) {
 
 			//if the value is worth checking then we find a value
 			if(context.stereo_l[i+3*Source.SAMPLES/4] > 1) {
