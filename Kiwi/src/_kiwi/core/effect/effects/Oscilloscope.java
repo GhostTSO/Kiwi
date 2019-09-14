@@ -60,10 +60,10 @@ public class Oscilloscope extends Effect {
 			verticalVector += context.stereo_r[i];
 		}
 		
-		verticalVector = Util.map(verticalVector, 0, 25000, 0, context.canvas_h);
-		horizontalVector = Util.map(horizontalVector, 0, 25000, 0, context.canvas_w);
+		verticalVector = ((verticalVector - 0) * (context.canvas_h-0))/(500000 - 0);
+		horizontalVector = ((horizontalVector - 0) * (context.canvas_h-0))/(500000 - 0);
 		
-		//System.out.println(verticalVector);
+//		System.out.println("Vert vect: " +verticalVector + " Window Height: " + context.canvas_h + " Difference: " + (context.canvas_h-verticalVector));
 		
 		pointsVert[counter] = (int)verticalVector;
 		pointsHor[counter] = (int)horizontalVector;
