@@ -31,7 +31,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 		WINDOW_H = 480,
 		THREAD_FPS = 60,
 		THREAD_TPS = 60,
-		THREAD_SYNC = 0;
+		THREAD_SYNC_MIN = 0,
+		THREAD_SYNC_MAX = 16;
 	
 	//memory space for sound data
 	protected final double[]
@@ -234,7 +235,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 					if(elapsed >= ONE_SECOND) {
 						System.out.println("FPS: " + f_ct);
 						System.out.println("TPS: " + t_ct);
-						elapsed -= ONE_SECOND;
+						elapsed = 0;
 						fps = f_ct;
 						tps = t_ct;
 						f_ct = 0;
@@ -246,8 +247,9 @@ public class Engine implements Renderable, Updateable, Runnable {
 							f_time - f_elapsed
 							) / ONE_MILLIS;
 					//sleep until next cycle
-					if(sync > THREAD_SYNC)
-						Thread.sleep(sync);
+					if(sync > THREAD_SYNC_MAX) sync = THREAD_SYNC_MAX;
+					if(sync < THREAD_SYNC_MIN) sync = THREAD_SYNC_MIN;
+					if(sync > 0) Thread.sleep(sync);
 				}
 		} catch(Exception ex) {
 			ex.printStackTrace();
