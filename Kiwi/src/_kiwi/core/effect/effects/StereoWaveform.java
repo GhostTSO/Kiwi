@@ -1,6 +1,7 @@
 package _kiwi.core.effect.effects;
 
 import java.awt.Color;
+import java.awt.RenderingHints;
 
 import _kiwi.core.effect.Effect;
 import _kiwi.core.source.Source;
@@ -24,6 +25,10 @@ public class StereoWaveform extends Effect {
 	
 	@Override
 	public void onRender(RenderContext context) {
+		context.g2D.setRenderingHint(
+				RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON
+				);
 		double[] 
 				stereo_l = Util.hpf(context.stereo_l, stereo_min),
 				stereo_r = Util.hpf(context.stereo_r, stereo_min);
