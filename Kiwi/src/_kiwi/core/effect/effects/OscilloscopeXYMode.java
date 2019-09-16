@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 
 import _kiwi.core.effect.Effect;
-import _kiwi.util.Util;
 
 public class OscilloscopeXYMode extends Effect {
 

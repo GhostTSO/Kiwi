@@ -3,7 +3,6 @@ package _kiwi.core.effect.effects;
 import java.awt.Color;
 
 import _kiwi.core.effect.Effect;
-import _kiwi.util.Util;
 
 public class Oscilloscope extends Effect {
 
