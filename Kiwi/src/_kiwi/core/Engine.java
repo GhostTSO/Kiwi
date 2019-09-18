@@ -32,7 +32,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 		THREAD_FPS = 60,
 		THREAD_TPS = 60,
 		THREAD_SYNC_MIN = 0,
-		THREAD_SYNC_MAX = 16;
+		THREAD_SYNC_MAX = 2;
 	
 	//memory space for sound data
 	protected final double[]
