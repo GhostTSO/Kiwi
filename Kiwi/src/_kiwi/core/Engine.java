@@ -222,13 +222,13 @@ public class Engine implements Renderable, Updateable, Runnable {
 					//if time to update, then update
 					if(t_elapsed >= t_time) {
 						update((double)t / ONE_SECOND, (double)t_elapsed / ONE_SECOND);
-						t_elapsed -= t_time;
+						t_elapsed = 0;
 						t_ct ++;
 					}
 					//if time to render, then render
 					if(f_elapsed >= f_time) {
 						render((double)t / ONE_SECOND, (double)f_elapsed / ONE_SECOND);
-						f_elapsed -= f_time;
+						f_elapsed = 0;
 						f_ct ++;
 					}	
 					//if elapsed time > 1 second, cache and reset counters
