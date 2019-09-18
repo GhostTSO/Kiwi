@@ -85,14 +85,20 @@ public class MountainValleys extends Effect{
 				points[j*32+i][1] = (j*context.canvas_h/5 + context.canvas_h);
 
 				if(i < 16) {
+					
+					int value = (int) (100*Math.log(context.stereo_l[i*32+j]));
+					
 					if(context.stereo_l[i*32+j] > 1) {
-						points[j*32+i][2] = ((int) (100*Math.log(context.stereo_l[i*32+j])));
+						points[j*32+i][2] = value;
 					}else {
 						points[j*32+i][2] = 0;
 					}
 				}else {
+					
+					int value = (int) (100*Math.log(context.stereo_r[i*32+j]));
+					
 					if(context.stereo_r[i*32+j] > 1) {
-						points[j*32+i][2] = ((int) (100*Math.log(context.stereo_r[i*32+j])));
+						points[j*32+i][2] = value;
 					}else {
 						points[j*32+i][2] = 0;
 					}

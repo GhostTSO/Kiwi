@@ -88,15 +88,12 @@ public class Circularity extends Effect {
 	public void onRender(RenderContext context) {
 		
 		
-	
-		
-
 		//create a render path to make the shape
 		GeneralPath circle = new GeneralPath();
 		
-		backPaint = new TexturePaint(backgroundImage, new Rectangle(0,0,context.canvas_w,context.canvas_h));
+		backPaint = new TexturePaint(foregroundImage, new Rectangle(0,0,context.canvas_w,context.canvas_h));
 		
-		context.g2D.drawImage(foregroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
+		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
 
 
 		//toggle antialising
@@ -123,21 +120,26 @@ public class Circularity extends Effect {
 		//context.g2D.setPaint(gp4);
 		
 		//begin drawing the shape
-		circle.moveTo(points[0][0], points[1][0]);		
+		circle.moveTo(points[0][0], points[1][0]);	
+	
 
 		//draw the rest of the points
-		for (int k = 1; k < 509; k++) 
+		for (int k = 1; k < 510; k++) {
 			circle.lineTo(points[0][k], points[1][k]);
+		}
 
 		//finish the shape
 		circle.closePath();
+		
 		context.g2D.fill(circle);
+
 	}
 	
 	public void onUpdate(UpdateContext context) {
 
 		//set speed of movement based on canvas size
-		speed = context.canvas_h/100;
+		speed = (60.0*context.dt)* (double) ( context.canvas_h/100.0);
+		System.out.println(context.dt);
 		
 		//set scale value based on height
 				scale = context.canvas_h/divider;
