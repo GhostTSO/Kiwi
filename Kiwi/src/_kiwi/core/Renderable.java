@@ -53,6 +53,6 @@ public interface Renderable {
 			copy.t  = this.t ;
 			copy.dt = this.dt;
 			return copy;
-		}
+		}		
 	}
 }
