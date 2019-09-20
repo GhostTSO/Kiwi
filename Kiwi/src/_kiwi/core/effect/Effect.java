@@ -1,6 +1,7 @@
 package _kiwi.core.effect;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -82,4 +83,11 @@ public class Effect implements Renderable, Updateable {
 		effects.add(new _kiwi.core.effect.effects.MountainValleys());
 		return effects;
 	}
+	
+	public void onMouseMoved(Point mouse) { }	
+	public void onWheelMoved(float wheel) { }	
+	public void onKeyDnAction(int key) { }	
+	public void onKeyUpAction(int key) { }	
+	public void onBtnDnAction(Point mouse, int btn) { }	
+	public void onBtnUpAction(Point mouse, int btn) { }
 }

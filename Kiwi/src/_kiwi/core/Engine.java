@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -18,7 +19,7 @@ import _kiwi.util.Util.Hint;
 
 public class Engine implements Renderable, Updateable, Runnable {
 	//engine constructor
-	public static final Engine
+	protected static final Engine
 		INSTANCE = new Engine();
 	
 	//version string
@@ -32,7 +33,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 		THREAD_FPS = 60,
 		THREAD_TPS = 60,
 		THREAD_SYNC_MIN = 0,
-		THREAD_SYNC_MAX = 0;
+		THREAD_SYNC_MAX = 2;
 	
 	//memory space for sound data
 	protected final double[]
@@ -150,6 +151,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 	 * Update sounds information into the buffers{@link _kiwi.core.effect.Effect effect}
 	 */
 	public void update(UpdateContext context) {
+		//poll input
+		Input.poll();
 		//check source to rebuild channels
 		boolean push = false;
 		for(Source source: sources) {
@@ -188,6 +191,30 @@ public class Engine implements Renderable, Updateable, Runnable {
 		if(effect != null)
 			effect.update(context);
 	}
+	
+	public void onMouseMoved(Point mouse) {
+		if(effect != null) effect.onMouseMoved(mouse);
+	}
+	
+	public void onWheelMoved(float wheel) {
+		if(effect != null) effect.onWheelMoved(wheel);
+	}
+	
+	public void onKeyDnAction(int key) {
+		if(effect != null) effect.onKeyDnAction(key);
+	}
+	
+	public void onKeyUpAction(int key) {
+		if(effect != null) effect.onKeyUpAction(key);
+	}
+	
+	public void onBtnDnAction(Point mouse, int btn) {
+		if(effect != null) effect.onBtnDnAction(mouse, btn);
+	}
+	
+	public void onBtnUpAction(Point mouse, int btn) {
+		if(effect != null) effect.onBtnUpAction(mouse, btn);
+	}	
 	
 	//time sizes
 	private static final long
@@ -233,8 +260,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 					}	
 					//if elapsed time > 1 second, cache and reset counters
 					if(elapsed >= ONE_SECOND) {
-						System.out.println("FPS: " + f_ct);
-						System.out.println("TPS: " + t_ct);
+						Debug.out.log("FPS: " + f_ct);
+						Debug.out.log("TPS: " + t_ct);
 						elapsed = 0;
 						fps = f_ct;
 						tps = t_ct;
@@ -245,10 +272,10 @@ public class Engine implements Renderable, Updateable, Runnable {
 					long sync = Math.min(
 							t_time - t_elapsed,
 							f_time - f_elapsed
-							) / ONE_MILLIS;
+							) / ONE_MILLIS - 1;
 					//sleep until next cycle
-					if(sync > THREAD_SYNC_MAX) sync = THREAD_SYNC_MAX;
 					if(sync < THREAD_SYNC_MIN) sync = THREAD_SYNC_MIN;
+					if(sync > THREAD_SYNC_MAX) sync = THREAD_SYNC_MAX;
 					if(sync > 0) Thread.sleep(sync);
 				}
 		} catch(Exception ex) {
@@ -286,6 +313,14 @@ public class Engine implements Renderable, Updateable, Runnable {
 			this.update_context.stereo_l = parent.stereo_l;
 			this.update_context.stereo_r = parent.stereo_r;
 			this.update_context.mono     = parent.mono;
+			
+			this.component.setFocusable(true);
+			this.component.setFocusTraversalKeysEnabled(false);
+			
+			this.component.addKeyListener(Input.INSTANCE);
+			this.component.addMouseListener(Input.INSTANCE);
+			this.component.addMouseWheelListener(Input.INSTANCE);
+			this.component.addMouseMotionListener(Input.INSTANCE);
 		}
 		
 		/**initialize method**/
