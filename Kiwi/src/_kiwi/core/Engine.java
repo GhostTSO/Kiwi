@@ -235,6 +235,10 @@ public class Engine implements Renderable, Updateable, Runnable {
 				f_elapsed = 0, 											//default value
 				t_elapsed = 0, 											//default value
 				elapsed = 0, 											//default value
+				f_avg = 0,
+				t_avg = 0,
+				f_lag = 0,
+				t_lag = 0,
 				f_ct = 0, 												//default value
 				t_ct = 0, 												//default value
 				t = System.nanoTime();									//current system time in nanoseconds
@@ -247,24 +251,30 @@ public class Engine implements Renderable, Updateable, Runnable {
 					t_elapsed += dt;
 					elapsed += dt;
 					//if time to update, then update
-					if(t_elapsed >= t_time) {
+					if(t_elapsed + t_lag >= t_time) {
 						update((double)t / ONE_SECOND, (double)t_elapsed / ONE_SECOND);
+						t_lag = t_elapsed - t_time;
+						t_avg += t_elapsed;
 						t_elapsed = 0;
 						t_ct ++;
 					}
 					//if time to render, then render
-					if(f_elapsed >= f_time) {
+					if(f_elapsed + f_lag >= f_time) {
 						render((double)t / ONE_SECOND, (double)f_elapsed / ONE_SECOND);
+						f_lag = f_elapsed - f_time;
+						f_avg += f_elapsed;
 						f_elapsed = 0;
 						f_ct ++;
 					}	
 					//if elapsed time > 1 second, cache and reset counters
 					if(elapsed >= ONE_SECOND) {
-						Debug.out.log("FPS: " + f_ct);
-						Debug.out.log("TPS: " + t_ct);
+						Debug.out.log("FPS: " + f_ct + " @ " + String.format("%2.3f", (double)f_avg / f_ct / ONE_MILLIS) + " ms");
+						Debug.out.log("TPS: " + t_ct + " @ " + String.format("%2.3f", (double)t_avg / t_ct / ONE_MILLIS) + " ms");
 						elapsed = 0;
 						fps = f_ct;
 						tps = t_ct;
+						f_avg = 0;
+						t_avg = 0;
 						f_ct = 0;
 						t_ct = 0;
 					}
