@@ -15,7 +15,7 @@ public interface Updateable {
 			stereo_r,
 			mono;
 		public double
-			t, dt;
+			t, dt, fixed_dt;
 		public Hint
 			hint = Hint.LIN;
 		

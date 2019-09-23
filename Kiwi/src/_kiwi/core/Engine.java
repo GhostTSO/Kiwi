@@ -124,8 +124,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 	 * @param t elapsed time in seconds
 	 * @param dt  delta time in seconds
 	 */
-	private void render(double t, double dt) {
-		canvas.render(this, t, dt);
+	private void render(double t, double dt, double fixed_dt) {
+		canvas.render(this, t, dt, fixed_dt);
 	}
 	
 	/**
@@ -133,8 +133,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 	 * @param t elapsed time in seconds
 	 * @param dt  delta time in seconds
 	 */
-	private void update(double t, double dt) {
-		canvas.update(this, t, dt);
+	private void update(double t, double dt, double fixed_dt) {
+		canvas.update(this, t, dt, fixed_dt);
 	}
 	
 	@Override
@@ -231,7 +231,11 @@ public class Engine implements Renderable, Updateable, Runnable {
 			onInit();
 			long
 				f_time = THREAD_FPS > 0 ? ONE_SECOND / THREAD_FPS : 0, 	// time per render in nanoseconds
-				t_time = THREAD_TPS > 0 ? ONE_SECOND / THREAD_TPS : 0, 	// time per update in nanoseconds
+				t_time = THREAD_TPS > 0 ? ONE_SECOND / THREAD_TPS : 0; 	// time per update in nanoseconds
+			double
+				fixed_f_dt = (double)f_time / ONE_SECOND,
+				fixed_t_dt = (double)t_time / ONE_SECOND;
+			long
 				f_elapsed = 0, 											//default value
 				t_elapsed = 0, 											//default value
 				elapsed = 0, 											//default value
@@ -252,16 +256,16 @@ public class Engine implements Renderable, Updateable, Runnable {
 					elapsed += dt;
 					//if time to update, then update
 					if(t_elapsed + t_lag >= t_time) {
-						update((double)t / ONE_SECOND, (double)t_elapsed / ONE_SECOND);
-						t_lag = t_elapsed - t_time;
+						update((double)t / ONE_SECOND, (double)t_elapsed / ONE_SECOND, fixed_t_dt);
+						t_lag = Math.max(t_elapsed - t_time, 0);
 						t_avg += t_elapsed;
 						t_elapsed = 0;
 						t_ct ++;
 					}
 					//if time to render, then render
 					if(f_elapsed + f_lag >= f_time) {
-						render((double)t / ONE_SECOND, (double)f_elapsed / ONE_SECOND);
-						f_lag = f_elapsed - f_time;
+						render((double)t / ONE_SECOND, (double)f_elapsed / ONE_SECOND, fixed_f_dt);
+						f_lag = Math.max(f_elapsed - f_time, 0);
 						f_avg += f_elapsed;
 						f_elapsed = 0;
 						f_ct ++;
@@ -280,8 +284,8 @@ public class Engine implements Renderable, Updateable, Runnable {
 					}
 					//how much time to next cycle
 					long sync = Math.min(
-							t_time - t_elapsed,
-							f_time - f_elapsed
+							t_time - t_elapsed - t_lag,
+							f_time - f_elapsed - f_lag
 							) / ONE_MILLIS - 1;
 					//sleep until next cycle
 					if(sync < THREAD_SYNC_MIN) sync = THREAD_SYNC_MIN;
@@ -343,7 +347,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 		private BufferStrategy
 			b;
 		
-		private void render(Renderable renderable, double t, double dt) {
+		private void render(Renderable renderable, double t, double dt, double fixed_dt) {
 			if(b == null || b.contentsLost()) {
 				component.createBufferStrategy(2);
 				b = component.getBufferStrategy();
@@ -354,6 +358,7 @@ public class Engine implements Renderable, Updateable, Runnable {
 			render_context.canvas_h = component.getHeight();
 			render_context.t  = t ;
 			render_context.dt = dt;
+			render_context.fixed_dt = fixed_dt;
 			
 			renderable.render(render_context);
 			
@@ -361,11 +366,12 @@ public class Engine implements Renderable, Updateable, Runnable {
 			b.show();
 		}
 		
-		private void update(Updateable updateable, double t, double dt) {
+		private void update(Updateable updateable, double t, double dt, double fixed_dt) {
 			update_context.canvas_w = component.getWidth() ;
 			update_context.canvas_h = component.getHeight();
 			update_context.t  = t ;
 			update_context.dt = dt;
+			render_context.fixed_dt = fixed_dt;
 			
 			updateable.update(update_context);
 		}

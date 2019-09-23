@@ -62,7 +62,8 @@ public class StereoWaveform extends Effect {
 						(float)lerp1[2],
 						(float)lerp1[3]
 						);			
-		for(int i = 0; i < Source.SAMPLES / 2; i += 6) {
+		int z = 6;
+		for(int i = 0; i < Source.SAMPLES / 2; i += z) {
 			double
 				x = (Source.SAMPLES / 1.65 - i),
 				l = Util.map_loge(stereo_l[i] / x, 0, stereo_max, stereo_ramp),
@@ -72,9 +73,9 @@ public class StereoWaveform extends Effect {
 			
 					
 			context.g2D.setColor(color0);
-			context.g2D.fillRect((int)(i * w), (int)(h - lh), (int)(w * 6), (int)lh);
+			context.g2D.fillRect((int)(i * w), (int)(h - lh), (int)(w * z), (int)lh);
 			context.g2D.setColor(color1);
-			context.g2D.fillRect((int)(i * w), (int)(h     ), (int)(w * 6), (int)rh);
+			context.g2D.fillRect((int)(i * w), (int)(h     ), (int)(w * z), (int)rh);			
 		}			
 	}
 }
