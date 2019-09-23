@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import _kiwi.core.effect.Effect;
 import _kiwi.core.source.Source;
 
-public class Circularity extends Effect {
+public class InvertedCircularity extends Effect {
 
 	//store recent high values for right and lefts
 	double[] peaksLeft = new double[Source.SAMPLES/4];
@@ -22,7 +22,7 @@ public class Circularity extends Effect {
 
 	//values necessary for scaling
 	double root; //actual value
-	double divider = 25; //constant value for reducing scale
+	double divider = 15; //constant value for reducing scale
 	double scale; //value dependent on window size
 
 	//values needed to make a circle
@@ -49,18 +49,10 @@ public class Circularity extends Effect {
 	BufferedImage foregroundImage; 
 	TexturePaint backPaint;
 	
-	float redColor = .3f;
-	float blueColor = .6f;
-	float greenColor = .2f;
-	
-	float redSpeed = .001f;
-	float blueSpeed= .005f;
-	float greenSpeed= .003f;
-	
-	
+
 	//contstructor
-	public Circularity() {
-		super("Circularity");
+	public InvertedCircularity() {
+		super("Inverted Circularity");
 		
 		//load background image
 				try {
@@ -76,27 +68,6 @@ public class Circularity extends Effect {
 	@Override
 	public void onRender(RenderContext context) {
 		
-		if(redColor > .95f) {
-			redSpeed *= -1;
-		}else if(redColor < .05f) {
-			redSpeed *= -1;
-		}
-		
-		if(blueColor > .8f) {
-			blueSpeed *= -1;
-		}else if(blueColor < .5f) {
-			blueSpeed *= -1;
-		}
-		
-		if(greenColor > .45f) {
-			greenSpeed *= -1;
-		}else if(greenColor < .13f) {
-			greenSpeed *= -1;
-		}
-		
-		redColor += redSpeed;
-		blueColor += blueSpeed;
-		greenColor += greenSpeed;
 		
 		//create a render path to make the shape
 		GeneralPath circle = new GeneralPath();
@@ -107,7 +78,7 @@ public class Circularity extends Effect {
 
 		//toggle antialising
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		context.g2D.setColor(new Color(redColor,0f,1f-redColor,.5f));
+		context.g2D.setColor(new Color(1f,.0f,.65f,.5f));
 		
 		//begin drawing the shape
 		circle.moveTo(points[0][0], points[1][0]);	
@@ -140,13 +111,13 @@ public class Circularity extends Effect {
 					if(context.stereo_l[i+3*Source.SAMPLES/4] > 1) {
 
 						//find the new value
-						root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4]));
+						root = -scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4]));
 
 						//if the new value is greater than the old we store it
-						if(root > peaksLeft[i]) {
+						if(root < peaksLeft[i]) {
 							peaksLeft[i] = root;
 						}else //shrink the circle if there is room to shrink
-							if(peaksLeft[i] > speed){
+							if(peaksLeft[i] > -speed){
 								peaksLeft[i] -= speed;
 							}else //set to default value 0
 							{
@@ -164,27 +135,27 @@ public class Circularity extends Effect {
 					degree = (float)(i*Math.PI/255.0);
 
 					//calculate x and y position for the top arc
-					topXValue = (context.canvas_w/6*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree))+context.canvas_w/2;
-					topYValue = (context.canvas_w/6*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree))+context.canvas_h/2;
+					topXValue = (context.canvas_w/2*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree))+context.canvas_w/2;
+					topYValue = (context.canvas_w/2*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree))+context.canvas_h/2;
 
 					//if the value is worth checking
 					if(context.stereo_r[i+3*Source.SAMPLES/4] > 1) {
 
 						//find the new value
-						root = scale*(Math.log(context.stereo_r[i+3*Source.SAMPLES/4]));
+						root = -scale*(Math.log(context.stereo_r[i+3*Source.SAMPLES/4]));
 
 						//if the new value is greater than the old we store it
-						if(root > peaksRight[i]) {
+						if(root < peaksRight[i]) {
 							peaksRight[i] = root;
 						}else //shrink the circle if there is room to shrink
-							if(peaksRight[i] > speed){
+							if(peaksRight[i] > -speed){
 								peaksRight[i] -= speed;
 							}else //set to default value 0
 							{
 								peaksRight[i] = 0;
 							}
 					}else //shrink the circle if there is room to shrink
-						if(peaksRight[i] > speed){
+						if(peaksRight[i] < -speed){
 							peaksRight[i] -= speed;
 						}else //set to default value 0
 						{
@@ -193,8 +164,8 @@ public class Circularity extends Effect {
 
 
 					//calculate x and y position for the top arc
-					botXValue = (context.canvas_w/6*Math.cos(-degree)+ peaksRight[i]*Math.cos(-degree))+context.canvas_w/2;
-					botYValue = (context.canvas_w/6*Math.sin(-degree)+ peaksRight[i]*Math.sin(-degree))+context.canvas_h/2;
+					botXValue = (context.canvas_w/2*Math.cos(-degree)+ peaksRight[i]*Math.cos(-degree))+context.canvas_w/2;
+					botYValue = (context.canvas_w/2*Math.sin(-degree)+ peaksRight[i]*Math.sin(-degree))+context.canvas_h/2;
 
 					//store the points into the point array to be rendered later
 					points[0][i] = (int)topXValue;

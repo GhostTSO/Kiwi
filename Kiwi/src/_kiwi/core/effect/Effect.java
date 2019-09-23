@@ -81,6 +81,7 @@ public class Effect implements Renderable, Updateable {
 		effects.add(new _kiwi.core.effect.effects.OscilloscopeXYMode());
 		effects.add(new _kiwi.core.effect.effects.Bloxels());
 		effects.add(new _kiwi.core.effect.effects.MountainValleys());
+		effects.add(new _kiwi.core.effect.effects.InvertedCircularity());
 		return effects;
 	}
 	
