@@ -14,7 +14,7 @@ public class Input implements KeyListener, MouseListener, MouseWheelListener, Mo
 		INSTANCE = new Input();
 	public static final int
 		NUM_KEYS = 65535,
-		NUM_BTNS = 3;
+		NUM_BTNS = 24;
 	public static enum Key {
 		DN_ACTION, DN,
 		UP_ACTION, UP
