@@ -37,82 +37,36 @@ public class Oscilloscope extends Effect {
 	public void render(RenderContext context) {
 
 		Color myColor = new Color(0,0,0);
-		//context.g2D.setColor(myColor);
-		//context.g2D.fillRect(0, 0, context.canvas_w, context.canvas_h);
 		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
-		//		myColor = new Color(255,0,0);
-		//		context.g2D.setColor(myColor);
-		//		context.g2D.drawLine(0, context.canvas_h/2, context.canvas_w, context.canvas_h/2);
-		//		myColor = new Color(0,255,0);
 		context.g2D.setColor(myColor);
 
-		GeneralPath fill = new GeneralPath();
+		GeneralPath top = new GeneralPath();
+		GeneralPath bottom = new GeneralPath();
 
 
-		context.g2D.setStroke(new BasicStroke((2*context.canvas_w/Source.SAMPLES)+1));
-
-		fill.moveTo(0, pointsLeft[counter]);
+		top.moveTo(0, 0);
+		top.lineTo(0, context.canvas_h/2 - pointsLeft[counter]);
+		bottom.moveTo(0, context.canvas_h/2 );
+		bottom.lineTo(0, context.canvas_h/2 +pointsRight[counter]);
 
 
 		for(int i = 1; i <600; i++) {
-
-
-			fill.lineTo(i*context.canvas_w/(pointsLeft.length-1), pointsLeft[(i+counter)%599]/2+5);
-
-//			context.g2D.drawLine(i*context.canvas_w/(pointsLeft.length-1), pointsLeft[(i+counter)%599]/2+5, (i+1)*context.canvas_w/(pointsLeft.length-1), pointsLeft[(i+counter)%599+1]/2+5);
-
-			//			context.g2D.drawLine(i*context.canvas_w/(pointsRight.length-1), context.canvas_h- pointsRight[(i+counter)%599]/2-5, (i+1)*context.canvas_w/(pointsRight.length-1),context.canvas_h- pointsRight[(i+counter)%599+1]/2-5);
-
-			//			context.g2D.drawLine(i*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[(i+counter)%599]-pointsLeft[(i+counter)%599])/2, (i+1)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[(i+counter)%599+1]-pointsLeft[(i+counter)%599+1])/2);
-
+			top.lineTo(i*context.canvas_w/(pointsLeft.length-1), context.canvas_h/2 - pointsLeft[(i+counter)%599]/2);
+			bottom.lineTo(i*context.canvas_w/(pointsLeft.length-1), context.canvas_h/2+ pointsRight[(i+counter)%599]/2);
 		}
 
-		for(int i = 599; i > -1; i--) {
-
-
-			fill.lineTo(i*context.canvas_w/(pointsLeft.length-1), context.canvas_h- pointsRight[(i+counter)%599]/2-5);
-
-//			context.g2D.drawLine(i*context.canvas_w/(pointsLeft.length-1), pointsLeft[(i+counter)%599]/2+5, (i+1)*context.canvas_w/(pointsLeft.length-1), pointsLeft[(i+counter)%599+1]/2+5);
-
-			//			context.g2D.drawLine(i*context.canvas_w/(pointsRight.length-1), context.canvas_h- pointsRight[(i+counter)%599]/2-5, (i+1)*context.canvas_w/(pointsRight.length-1),context.canvas_h- pointsRight[(i+counter)%599+1]/2-5);
-
-			//			context.g2D.drawLine(i*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[(i+counter)%599]-pointsLeft[(i+counter)%599])/2, (i+1)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[(i+counter)%599+1]-pointsLeft[(i+counter)%599+1])/2);
-
-		}
 		
-		fill.moveTo(0, pointsRight[counter]);
-
-//		context.g2D.drawLine((599-counter)*context.canvas_w/(pointsLeft.length-1), pointsLeft[599]/2+5, ((599-counter)+1)*context.canvas_w/(pointsLeft.length-1), pointsLeft[0]/2+5);
-//		context.g2D.drawLine((599-counter)*context.canvas_w/(pointsRight.length-1), context.canvas_h- pointsRight[599]/2-5, ((599-counter)+1)*context.canvas_w/(pointsRight.length-1),context.canvas_h- pointsRight[0]/2-5);
-//		context.g2D.drawLine((599-counter)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[599]-pointsLeft[598])/2, ((599-counter)+1)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[0]-pointsLeft[0])/2);
-
-
-		//draws right of counter
-		//		for(int i = counter+1; i < 599; i++) {
-		//		context.g2D.drawLine((i-counter)*context.canvas_w/(pointsLeft.length-1), pointsLeft[i]/2+5, ((i-counter)+1)*context.canvas_w/(pointsLeft.length-1), pointsLeft[i+1]/2+5);
-		//		context.g2D.drawLine((i-counter)*context.canvas_w/(pointsRight.length-1), context.canvas_h- pointsRight[i]/2-5, ((i-counter)+1)*context.canvas_w/(pointsRight.length-1),context.canvas_h- pointsRight[i+1]/2-5);
-		//		context.g2D.drawLine((i-counter)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[i]-pointsLeft[i])/2, ((i-counter)+1)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[i+1]-pointsLeft[i+1])/2);
-		//		}
-		//		
-		//		myColor = new Color(0,255,0);
-		//		context.g2D.setColor(myColor);
-		//		
-		//		int h = 0;
-		//		for(int i = 599 - counter; i < 599; i++) {
-		//			context.g2D.drawLine((i)*context.canvas_w/(pointsLeft.length-1), pointsLeft[h]/2+5, ((i)+1)*context.canvas_w/(pointsLeft.length-1), pointsLeft[h+1]/2+5);
-		//			context.g2D.drawLine((i)*context.canvas_w/(pointsRight.length-1), context.canvas_h- pointsRight[h]/2-5, ((i)+1)*context.canvas_w/(pointsRight.length-1),context.canvas_h- pointsRight[h+1]/2-5);
-		//			context.g2D.drawLine((i)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[h]-pointsLeft[h])/2, ((i)+1)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[h+1]-pointsLeft[h+1])/2);
-		//			h++;
-		//			}
-		//		context.g2D.drawLine((598-h)*context.canvas_w/(pointsLeft.length-1), pointsLeft[599]/2+5, ((598-h)+1)*context.canvas_w/(pointsLeft.length-1), pointsLeft[0]/2+5);
-		//		context.g2D.drawLine((598-h)*context.canvas_w/(pointsRight.length-1), context.canvas_h- pointsRight[599]/2-5, ((598-h)+1)*context.canvas_w/(pointsRight.length-1),context.canvas_h- pointsRight[0]/2-5);
-		//		context.g2D.drawLine((598-h)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[599]-pointsLeft[598])/2, ((598-h)+1)*context.canvas_w/(pointsRight.length-1), context.canvas_h/2-(pointsRight[0]-pointsLeft[0])/2);
+		top.lineTo(context.canvas_w, 0);
+		bottom.lineTo(context.canvas_w, context.canvas_h);
+		top.lineTo(0, 0);
+		bottom.lineTo(0, context.canvas_h);
 
 
-		fill.closePath();
+		top.closePath();
+		bottom.closePath();
 		
-		context.g2D.fill(fill);
-
+		context.g2D.fill(top);
+		context.g2D.fill(bottom);
 
 
 	}
