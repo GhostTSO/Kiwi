@@ -97,12 +97,6 @@ public class Oscilloscope extends Effect {
 		left = ((left - 0) * (context.canvas_h-0))/(peak - 0);
 		right = ((right - 0) * (context.canvas_h-0))/(peak - 0);
 
-
-
-		//		System.out.println(peak);
-
-		//		System.out.println("Vert vect: " +verticalVector + " Window Height: " + context.canvas_h + " Difference: " + (context.canvas_h-verticalVector));
-
 		pointsLeft[counter] = (int)left;
 		pointsRight[counter] = (int)right;
 
@@ -110,7 +104,6 @@ public class Oscilloscope extends Effect {
 			if(peak > 100) {
 				peak *= .95;
 			}
-			System.out.println(peak);
 			repeat = 0;
 		}
 
