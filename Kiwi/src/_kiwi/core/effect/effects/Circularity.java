@@ -22,7 +22,7 @@ public class Circularity extends Effect {
 
 	//values necessary for scaling
 	double root; //actual value
-	double divider = 25; //constant value for reducing scale
+	double divider = 40; //constant value for reducing scale
 	double scale; //value dependent on window size
 
 	//values needed to make a circle
@@ -37,6 +37,9 @@ public class Circularity extends Effect {
 
 	//speed that the circle collapses
 	double speed;
+	
+	double peak = 50;
+	int repeat = 0;
 
 	//storage for position before
 	int lastTopX;
@@ -139,8 +142,36 @@ public class Circularity extends Effect {
 					//if the value is worth checking then we find a value
 					if(context.stereo_l[i+3*Source.SAMPLES/4] > 1) {
 
-						//find the new value
-						root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4]));
+						if(context.stereo_l[i+3*Source.SAMPLES/4] > peak){
+							peak = context.stereo_l[i+3*Source.SAMPLES/4];
+							repeat = 0;
+						}
+						switch(context.hint) {
+
+						case LIN:
+							
+							//find the new value
+							root = ((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+							break;
+						case LOG:
+							
+							//find the new value
+							root = ((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+							//find the new value
+							root = 2*scale*(Math.log(root));
+							break;
+						case TANH:
+							
+							//find the new value
+							root = ((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (1+1))/(peak - 0);
+							
+							//find the new value
+							root = 25*scale*(Math.tanh(root));	
+							break;
+						}
+						
+						
+						
 
 						//if the new value is greater than the old we store it
 						if(root > peaksLeft[i]) {
@@ -161,17 +192,45 @@ public class Circularity extends Effect {
 						}
 
 					//calculate current degrees
-					degree = (float)(i*Math.PI/255.0);
+					degree = (float)((i+128)*Math.PI/255.0);
 
 					//calculate x and y position for the top arc
 					topXValue = (context.canvas_w/6*Math.cos(degree)+ peaksLeft[i]*Math.cos(degree))+context.canvas_w/2;
-					topYValue = (context.canvas_w/6*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree))+context.canvas_h/2;
+					topYValue = (context.canvas_w/6*Math.sin(degree)+ peaksLeft[i]*Math.sin(degree))+3*context.canvas_h/5;
 
 					//if the value is worth checking
 					if(context.stereo_r[i+3*Source.SAMPLES/4] > 1) {
 
 						//find the new value
-						root = scale*(Math.log(context.stereo_r[i+3*Source.SAMPLES/4]));
+						if(context.stereo_l[i+3*Source.SAMPLES/4] > peak){
+							peak = context.stereo_l[i+3*Source.SAMPLES/4];
+							repeat = 0;
+						}
+						
+						switch(context.hint) {
+
+						
+						
+						case LIN:
+							
+							//find the new value
+							root = ((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+							break;
+						case LOG:
+							
+							root = ((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+							//find the new value
+							root = 2*scale*(Math.log(root));
+							break;
+						case TANH:
+							
+							//find the new value
+							root = ((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (1.0+1.0))/(peak - 0);
+							
+							//find the new value
+							root = 25*scale*(Math.tanh(root));		
+							break;
+						}
 
 						//if the new value is greater than the old we store it
 						if(root > peaksRight[i]) {
@@ -192,9 +251,11 @@ public class Circularity extends Effect {
 						}
 
 
+					degree = (float)((i-128)*Math.PI/255.0);
+					
 					//calculate x and y position for the top arc
 					botXValue = (context.canvas_w/6*Math.cos(-degree)+ peaksRight[i]*Math.cos(-degree))+context.canvas_w/2;
-					botYValue = (context.canvas_w/6*Math.sin(-degree)+ peaksRight[i]*Math.sin(-degree))+context.canvas_h/2;
+					botYValue = (context.canvas_w/6*Math.sin(-degree)+ peaksRight[i]*Math.sin(-degree))+3*context.canvas_h/5;
 
 					//store the points into the point array to be rendered later
 					points[0][i] = (int)topXValue;
@@ -203,5 +264,14 @@ public class Circularity extends Effect {
 					points[1][509-i] = (int)botYValue;
 				}						
 
+				
+				if(repeat > 100) {
+					if(peak > 100) {
+						peak *= .95;
+						System.out.println(peak);
+					}
+					repeat = 0;
+				}
+				repeat++;
 	}
 }

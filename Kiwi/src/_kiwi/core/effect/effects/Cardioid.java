@@ -1,7 +1,9 @@
 package _kiwi.core.effect.effects;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.TexturePaint;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,18 +14,19 @@ import javax.imageio.ImageIO;
 import _kiwi.core.effect.Effect;
 import _kiwi.core.source.Source;
 
-public class Horizon extends Effect {
+public class Cardioid extends Effect {
 
 	//store recent high values for right and lefts
-	double[] peaksLeft = new double[510];
-	double[] peaksRight = new double[510];
+	double[] peaksLeft = new double[Source.SAMPLES/4];
+	double[] peaksRight = new double[Source.SAMPLES/4];
 
 	//values necessary for scaling
 	double root; //actual value
-	double divider = 12.5; //constant value for reducing scale
+	double divider = 40; //constant value for reducing scale
 	double scale; //value dependent on window size
 
 	//values needed to make a circle
+	float degree; //current amount of degrees in the circle
 	double topXValue; //x pos value for top circle point
 	double topYValue; //y pos value for top circle point
 	double botXValue; //y pos value for bottom circle point
@@ -35,8 +38,8 @@ public class Horizon extends Effect {
 	//speed that the circle collapses
 	double speed;
 
-	double peak=100;
-	int counter = 0;
+	double peak = 50;
+	int repeat = 0;
 
 	//storage for position before
 	int lastTopX;
@@ -44,94 +47,71 @@ public class Horizon extends Effect {
 	int lastBotX;
 	int lastBotY;
 
-	BufferedImage backgroundImage; 
-	//	TexturePaint back;
 
-	//constructor
-	public Horizon() {
-		super("Horizon");
+	BufferedImage backgroundImage; 
+	BufferedImage foregroundImage; 
+	TexturePaint backPaint;
+
+
+
+	//contstructor
+	public Cardioid() {
+		super("Cardiod");
 
 		//load background image
 		try {
-			backgroundImage = ImageIO.read(new File(".\\bin\\_kiwi\\core\\effect\\effects\\resources\\HorizonBackground.png"));
-			//			back = new TexturePaint(backgroundImage, new Rectangle(0,0, 1920, 1080));
+			backgroundImage = ImageIO.read(new File(".\\bin\\_kiwi\\core\\effect\\effects\\resources\\CardioidBackground.png"));
+
 		}catch(IOException ex) {
 			System.out.println("Couldn't find file");
 		}
 
 	}
 
+
+
 	//operations needed to render the effect visually
 	@Override
 	public void onRender(RenderContext context) {
+
+
+
+		//create a render path to make the shape
+
+		GeneralPath circle = new GeneralPath();
+
+		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
+
+
 		//toggle antialising
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-
-		//create a render path for the black areas of the image
-		GeneralPath top = new GeneralPath();
-		GeneralPath bottom = new GeneralPath();
-
-
-		//draws background to the appropriate image and size
-		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
-		context.g2D.setColor(Color.BLACK);
+		context.g2D.setColor(new Color(.8f,0f,0f,.6f));
 
 		//begin drawing the shape
-		top.moveTo(points[0][0], points[1][0]);
-		bottom.moveTo(points[0][509], points[1][509]);
+		circle.moveTo(points[0][0], points[1][0]);	
 
 
 		//draw the rest of the points
-		for (int k = 1; k < 255; k++) {
-			top.lineTo(points[0][k], points[1][k]/2+context.canvas_h/2);
-			bottom.lineTo(points[0][509-k], points[1][509-k]/2+context.canvas_h/2);
-
+		for (int k = 0; k < 510; k++) {
+			circle.lineTo(points[0][k], points[1][k]);
 		}
-
-
-		for(int i = 0; i < 10; i++) {
-			top.lineTo((10*context.canvas_w)/(10-i), 0);
-			bottom.lineTo((10*context.canvas_w)/(10-i), context.canvas_h);
-		}
-
-		top.lineTo(0, 0);
-		bottom.lineTo(0, context.canvas_h);
-
 
 		//finish the shape
-		top.closePath();
-		bottom.closePath();
-		context.g2D.fill(top);
-		context.g2D.fill(bottom);
+		circle.closePath();
+
+		context.g2D.fill(circle);
+
+		circle.reset();
+
 	}
 
 	public void onUpdate(UpdateContext context) {
 
-
-		switch(context.hint) {
-
-		case LIN:
-			speed = context.canvas_h/50;
-			break;
-		case LOG:
-			speed = context.canvas_h/50;
-			scale = context.canvas_h/divider;
-			break;
-		case TANH:
-			speed = context.canvas_h/50;
-			scale = context.canvas_h/divider;
-			break;
-		}
-
-
 		//set speed of movement based on canvas size
-
+		speed = (60.0*context.dt)* (double) ( context.canvas_h/1000.0);
 
 		//set scale value based on height
-
-
-
+		scale = context.canvas_h/divider;
 
 		//for loop to go through 1/4 of the samples
 		for(int i = 0; i < 255; i ++) {
@@ -139,26 +119,38 @@ public class Horizon extends Effect {
 			//if the value is worth checking then we find a value
 			if(context.stereo_l[i+3*Source.SAMPLES/4] > 1) {
 
+				if(context.stereo_l[i+3*Source.SAMPLES/4] > peak){
+					peak = context.stereo_l[i+3*Source.SAMPLES/4];
+					repeat = 0;
+				}
 				switch(context.hint) {
 
 				case LIN:
 
-					if(context.stereo_l[i+3*Source.SAMPLES/4] > peak){
-						peak = context.stereo_l[i+3*Source.SAMPLES/4];
-						counter = 0;
-					}
 					//find the new value
-					root = ((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+					root = 2*((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
 					break;
 				case LOG:
+
 					//find the new value
-					root = scale*(Math.log(context.stereo_l[i+3*Source.SAMPLES/4]));
+					root = ((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+					//find the new value
+					if(root > 1) {
+						root = scale*(Math.log(root));
+					}else {
+						root = 0;
+					}
 					break;
 				case TANH:
+
 					//find the new value
-					root = scale*(Math.tanh(context.stereo_l[i+3*Source.SAMPLES/4]));	
+					root = ((context.stereo_l[i+3*Source.SAMPLES/4] - 0) * (1+1))/(peak - 0);
+
+					//find the new value
+					root = 50*scale*(Math.tanh(root));	
 					break;
 				}
+
 
 
 
@@ -180,33 +172,52 @@ public class Horizon extends Effect {
 					peaksLeft[i] = 0;
 				}
 
+			//calculate current degrees
+			degree = (float)((i)*Math.PI/254.0);
 
-			//calculate x and y position for the top arc
-			topXValue = (i-1)*context.canvas_w/252;
-			topYValue = -peaksLeft[i];
+			topXValue = scale*-(16*Math.sin(degree)*Math.sin(degree)*Math.sin(degree)) + context.canvas_w/2-Math.sin(degree)*root;
+			topYValue = scale*-(13*Math.cos(degree)-5*Math.cos(2*degree)-2*Math.cos(3*degree)-Math.cos(4*degree)) + context.canvas_h/2-Math.cos(degree)*root;
+
 
 			//if the value is worth checking
 			if(context.stereo_r[i+3*Source.SAMPLES/4] > 1) {
 
+				//find the new value
+				if(context.stereo_l[i+3*Source.SAMPLES/4] > peak){
+					peak = context.stereo_l[i+3*Source.SAMPLES/4];
+					repeat = 0;
+				}
+
 				switch(context.hint) {
 
+
+
 				case LIN:
-					if(context.stereo_r[i+3*Source.SAMPLES/4] > peak){
-						peak = context.stereo_r[i+3*Source.SAMPLES/4];
-						counter = 0;
-					}
+
 					//find the new value
-					root = ((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+					root = 2*((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
 					break;
 				case LOG:
+
+					root = ((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (context.canvas_h-0))/(peak - 0);
+
 					//find the new value
-					root = scale*(Math.log(context.stereo_r[i+3*Source.SAMPLES/4]));
+					if(root > 1) {
+						root = scale*(Math.log(root));
+					}else {
+						root = 0;
+					}
 					break;
 				case TANH:
+
 					//find the new value
-					root = scale*(Math.tanh(context.stereo_r[i+3*Source.SAMPLES/4]));	
+					root = ((context.stereo_r[i+3*Source.SAMPLES/4] - 0) * (1.0+1.0))/(peak - 0);
+
+					//find the new value
+					root = 50*scale*(Math.tanh(root));		
 					break;
 				}
+
 				//if the new value is greater than the old we store it
 				if(root > peaksRight[i]) {
 					peaksRight[i] = root;
@@ -226,24 +237,29 @@ public class Horizon extends Effect {
 				}
 
 
+			degree = (float)((-i)*Math.PI/254.0);
+
+
+
 			//calculate x and y position for the top arc
-			botXValue = (i-1)*context.canvas_w/252;
-			botYValue = peaksRight[i];
+			botXValue = scale*-(16.0*Math.sin(degree)*Math.sin(degree)*Math.sin(degree)) + context.canvas_w/2.0-Math.sin(degree)*root;
+			botYValue = scale*-(13.0*Math.cos(degree)-5.0*Math.cos(2*degree)-2.0*Math.cos(3.0*degree)-Math.cos(4.0*degree)) + context.canvas_h/2.0-Math.cos(degree)*root;
 
 			//store the points into the point array to be rendered later
 			points[0][i] = (int)topXValue;
-			points[1][i] = (int)topYValue-2;
+			points[1][i] = (int)topYValue;
 			points[0][509-i] = (int)botXValue;
-			points[1][509-i] = (int)botYValue+2;
-
-			counter++;
-
-			if(counter > 100) {
-				if(peak > 100) {
-					counter = 0;
-					peak *= .95;
-				}
-			}
+			points[1][509-i] = (int)botYValue;
 		}						
+
+
+		if(repeat > 100) {
+			if(peak > 100) {
+				peak *= .95;
+				System.out.println(peak);
+			}
+			repeat = 0;
+		}
+		repeat++;
 	}
 }

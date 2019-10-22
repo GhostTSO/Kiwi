@@ -51,8 +51,8 @@ public class Oscilloscope extends Effect {
 
 
 		for(int i = 1; i <600; i++) {
-			top.lineTo(i*context.canvas_w/(pointsLeft.length-1), context.canvas_h/2 - pointsLeft[(i+counter)%599]/2);
-			bottom.lineTo(i*context.canvas_w/(pointsLeft.length-1), context.canvas_h/2+ pointsRight[(i+counter)%599]/2);
+			top.lineTo((i-1)*context.canvas_w/(pointsLeft.length-2), context.canvas_h/2 - pointsLeft[(i+counter)%599]/2);
+			bottom.lineTo((i-1)*context.canvas_w/(pointsLeft.length-2), context.canvas_h/2+ pointsRight[(i+counter)%599]/2);
 		}
 
 		

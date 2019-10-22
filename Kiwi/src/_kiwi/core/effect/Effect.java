@@ -75,7 +75,7 @@ public class Effect implements Renderable, Updateable {
 		effects.add(new _kiwi.core.effect.effects.StereoWaveform());
 		effects.add(new _kiwi.core.effect.effects.Drift());
 		effects.add(new _kiwi.core.effect.effects.Circularity());
-		effects.add(new _kiwi.core.effect.effects.RainDrops());
+		effects.add(new _kiwi.core.effect.effects.Cardioid());
 		effects.add(new _kiwi.core.effect.effects.Horizon());
 		effects.add(new _kiwi.core.effect.effects.Oscilloscope());
 		effects.add(new _kiwi.core.effect.effects.OscilloscopeXYMode());
