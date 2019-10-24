@@ -85,7 +85,7 @@ public class Cardioid extends Effect {
 
 		//toggle antialising
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		context.g2D.setColor(new Color(.8f,0f,0f,.6f));
+		context.g2D.setColor(new Color(.8f,0f,0f,1.0f));
 
 		//begin drawing the shape
 		circle.moveTo(points[0][0], points[1][0]);	

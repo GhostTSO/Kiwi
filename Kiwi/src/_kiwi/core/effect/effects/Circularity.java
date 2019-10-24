@@ -68,6 +68,7 @@ public class Circularity extends Effect {
 		//load background image
 				try {
 					backgroundImage = ImageIO.read(new File(".\\bin\\_kiwi\\core\\effect\\effects\\resources\\CircularityBackground.png"));
+					foregroundImage = ImageIO.read(new File(".\\bin\\_kiwi\\core\\effect\\effects\\resources\\CircularityForeground.png"));
 					
 				}catch(IOException ex) {
 					System.out.println("Couldn't find file");
@@ -106,11 +107,11 @@ public class Circularity extends Effect {
 		
 		
 		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
-
+		
 
 		//toggle antialising
 		context.g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		context.g2D.setColor(new Color(redColor,0f,1f-redColor,.5f));
+		context.g2D.setColor(new Color(redColor,0f,1f-redColor,1.0f));
 		
 		//begin drawing the shape
 		circle.moveTo(points[0][0], points[1][0]);	
@@ -125,7 +126,8 @@ public class Circularity extends Effect {
 		circle.closePath();
 		
 		context.g2D.fill(circle);
-
+		context.g2D.drawImage(foregroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, foregroundImage.getWidth(), foregroundImage.getHeight(), null);
+		
 	}
 	
 	public void onUpdate(UpdateContext context) {

@@ -75,7 +75,7 @@ public class Horizon extends Effect {
 
 		//draws background to the appropriate image and size
 		context.g2D.drawImage(backgroundImage, 0,0,context.canvas_w,context.canvas_h, 0,0, backgroundImage.getWidth(), backgroundImage.getHeight(), null);
-		context.g2D.setColor(Color.BLACK);
+		context.g2D.setColor(new Color(0f,0f,0f,1f));
 
 		//begin drawing the shape
 		top.moveTo(points[0][0], points[1][0]);
