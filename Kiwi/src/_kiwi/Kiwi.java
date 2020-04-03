@@ -6,7 +6,7 @@ import kiwi.util.Version;
 
 public class Kiwi {
 	public static final Version
-		VERSION = new Version("Kiwi", 2, 1, 0);
+		VERSION = new Version("Kiwi", 2, 1, 1);
 	
 	public static void main(String[] args) {
 		//set the minimum logging priority at any time
